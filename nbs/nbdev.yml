@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "minima"
+  site-url: "https://m0saan.github.io/minima"
+  description: "Minima: A Python framework for dynamic neural networks and tensor computations with GPU acceleration."
+  repo-branch: main
+  repo-url: "https://github.com/m0saan/minima"

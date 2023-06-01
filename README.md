@@ -21,3 +21,80 @@ Fill me in please! Don’t forget code examples:
 ```
 
     2
+
+Sure! Here’s a sample README for your mini deep learning framework
+called “minima”:
+
+# Minima: A Mini Deep Learning Framework
+
+Minima is a lightweight deep learning framework designed to make it easy
+to build and train neural networks. It is inspired by PyTorch, but has a
+simpler interface and fewer features, making it easier to learn and use.
+
+## Features
+
+- Easy to install and use
+- Simple and intuitive API for defining and training neural networks
+- Built-in support for common layers and activation functions
+- Supports both CPU and GPU acceleration
+- Compatible with NumPy arrays for easy data manipulation
+
+## Installation
+
+To install Minima, simply clone the repository and run the following
+command:
+
+    pip install .
+
+This will install the package and all its dependencies.
+
+## Usage
+
+Here’s a simple example of how to define and train a neural network
+using Minima:
+
+``` python
+import minima
+
+# Define the neural network architecture
+model = minima.Sequential(
+    minima.Linear(784, 128),
+    minima.ReLU(),
+    minima.Linear(128, 10),
+    minima.Softmax()
+)
+
+# Load the dataset
+x_train, y_train, x_test, y_test = load_data()
+
+# Train the model
+loss_fn = minima.CrossEntropyLoss()
+optimizer = minima.SGD(model.parameters(), lr=0.01)
+for epoch in range(10):
+    for x_batch, y_batch in minibatch(x_train, y_train, batch_size=32):
+        y_pred = model(x_batch)
+        loss = loss_fn(y_pred, y_batch)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+# Evaluate the model
+y_pred = model(x_test)
+accuracy = compute_accuracy(y_pred, y_test)
+print(f"Accuracy: {accuracy:.2f}")
+```
+
+This example defines a simple neural network with two linear layers and
+two activation functions, trains it on a dataset using stochastic
+gradient descent, and evaluates its accuracy on a test set.
+
+## Documentation
+
+For more information on how to use Minima, please refer to the
+documentation, which can be found in the `docs/` directory of the
+repository.
+
+## License
+
+Minima is released under the MIT License. See `LICENSE` for more
+information.

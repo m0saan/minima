@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "core.html",
+    "href": "core.html",
+    "title": "core",
+    "section": "",
+    "text": "foo\n\n foo ()"
+  },
+  {
+    "objectID": "autograd.html",
+    "href": "autograd.html",
+    "title": "autograd",
+    "section": "",
+    "text": "Value\n\n Value ()\n\nInitialize self. See help(type(self)) for accurate signature."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "minima",
+    "section": "",
+    "text": "This file will become your README and also the index of your documentation."
+  },
+  {
+    "objectID": "index.html#install",
+    "href": "index.html#install",
+    "title": "minima",
+    "section": "Install",
+    "text": "Install\npip install minima"
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "minima",
+    "section": "How to use",
+    "text": "How to use\nFill me in please! Don’t forget code examples:\n\n1+1\n\n2\n\n\nSure! Here’s a sample README for your mini deep learning framework called “minima”:"
+  },
+  {
+    "objectID": "index.html#features",
+    "href": "index.html#features",
+    "title": "minima",
+    "section": "Features",
+    "text": "Features\n\nEasy to install and use\nSimple and intuitive API for defining and training neural networks\nBuilt-in support for common layers and activation functions\nSupports both CPU and GPU acceleration\nCompatible with NumPy arrays for easy data manipulation"
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "minima",
+    "section": "Installation",
+    "text": "Installation\nTo install Minima, simply clone the repository and run the following command:\npip install .\nThis will install the package and all its dependencies."
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "minima",
+    "section": "Usage",
+    "text": "Usage\nHere’s a simple example of how to define and train a neural network using Minima:\nimport minima\n\n# Define the neural network architecture\nmodel = minima.Sequential(\n    minima.Linear(784, 128),\n    minima.ReLU(),\n    minima.Linear(128, 10),\n    minima.Softmax()\n)\n\n# Load the dataset\nx_train, y_train, x_test, y_test = load_data()\n\n# Train the model\nloss_fn = minima.CrossEntropyLoss()\noptimizer = minima.SGD(model.parameters(), lr=0.01)\nfor epoch in range(10):\n    for x_batch, y_batch in minibatch(x_train, y_train, batch_size=32):\n        y_pred = model(x_batch)\n        loss = loss_fn(y_pred, y_batch)\n        optimizer.zero_grad()\n        loss.backward()\n        optimizer.step()\n\n# Evaluate the model\ny_pred = model(x_test)\naccuracy = compute_accuracy(y_pred, y_test)\nprint(f\"Accuracy: {accuracy:.2f}\")\nThis example defines a simple neural network with two linear layers and two activation functions, trains it on a dataset using stochastic gradient descent, and evaluates its accuracy on a test set."
+  },
+  {
+    "objectID": "index.html#documentation",
+    "href": "index.html#documentation",
+    "title": "minima",
+    "section": "Documentation",
+    "text": "Documentation\nFor more information on how to use Minima, please refer to the documentation, which can be found in the docs/ directory of the repository."
+  },
+  {
+    "objectID": "index.html#license",
+    "href": "index.html#license",
+    "title": "minima",
+    "section": "License",
+    "text": "License\nMinima is released under the MIT License. See LICENSE for more information."
+  }
+]

@@ -5,4 +5,5 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://m0saan.github.io',
                 'git_url': 'https://github.com/m0saan/minima',
                 'lib_path': 'minima'},
-  'syms': {'minima.core': {'minima.core.foo': ('autograd.html#foo', 'minima/core.py')}}}
+  'syms': { 'minima.autograd': {'minima.autograd.Value': ('autograd.html#value', 'minima/autograd.py')},
+            'minima.core': {'minima.core.Value': ('autograd.html#value', 'minima/core.py')}}}

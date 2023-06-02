@@ -403,6 +403,13 @@ class Value:
         """
         return self.data
     
+    def is_leaf(self):
+        return self.op is None
+
+    def __del__(self):
+        global TENSOR_COUNTER
+        TENSOR_COUNTER -= 1
+    
     
     def backward(self) -> None:
         """
@@ -466,7 +473,7 @@ class CPUDevice(Device):
     """Represents data that sits in CPU"""
 
     def __repr__(self):
-        return "needle.cpu()"
+        return "minima.cpu()"
 
     def __hash__(self):
         return self.__repr__().__hash__()
@@ -657,6 +664,104 @@ class Tensor(Value):
             tensor.realize_data()
         return tensor
     
+    def create_detached_tensor(self, data, requires_grad=False) -> 'Tensor':
+        """
+        Creates a new tensor that shares the data with the current tensor but detaches it from the computational graph.
+
+        Args:
+        - data: The data for the new tensor. It can be any array-like object or a Tensor. 
+                 If a Tensor is provided, its underlying data is extracted.
+        - requires_grad (optional): Whether the new tensor requires gradient computation. 
+                                    The default value is False, meaning that the new tensor will be detached from the computational graph.
+
+        Returns:
+        A new Tensor that shares the data with the current tensor but is detached from the computational graph.
+
+        Example:
+        >>> t = Tensor([1, 2, 3], requires_grad=True)
+        >>> t_detached = t.create_detached_tensor(t.data)
+        >>> print(t_detached)
+        Tensor([1, 2, 3])
+        """
+        tensor = Tensor.__new__(Tensor)
+        return tensor._init(None,
+                            set(),
+                            data=data if not isinstance(data, Tensor) else data.realize_data(),
+                            requires_grad=requires_grad
+                           )
+        
+        
+    def detach(self) -> 'Tensor':
+        """
+        Creates a new tensor that shares the data with the current tensor but is detached from the computational graph.
+
+        Returns:
+        A new Tensor that shares the data with the current tensor but is detached from the computational graph.
+
+        Example:
+        >>> t = Tensor([1, 2, 3], requires_grad=True)
+        >>> t_detached = t.detach()
+        >>> print(t_detached)
+        Tensor([1, 2, 3])
+        """
+        return self.create_detached_tensor(self.realize_data())
+    
+    def numpy(self):
+        """
+        Converts the tensor data into a NumPy array.
+
+        Returns:
+        The data of the tensor as a NumPy array.
+
+        Example:
+        >>> t = Tensor([1, 2, 3])
+        >>> np_array = t.numpy()
+        >>> print(type(np_array))
+        <class 'numpy.ndarray'>
+        """
+        
+        data = self.realize_data()
+        if ARRAY_API is numpy: return data
+        return data.numpy()  # Data is of type NDArray!
+
+    @property
+    def data(self):
+        """
+        Returns a tensor that shares the data with the current tensor but is detached from the computational graph.
+
+        Example:
+        >>> t = Tensor([1, 2, 3], requires_grad=True)
+        >>> print(t.data)
+        Tensor([1, 2, 3])
+        """
+        return self.detach()
+
+    @data.setter
+    def data(self, value):
+        """
+        Sets the data of the current tensor to the data of another tensor. The tensors must be of the same dtype.
+
+        Args:
+        - value: A tensor whose data is used to set the data of the current tensor.
+
+        Raises:
+        - AssertionError: If value is not a tensor or if the dtype of value is not the same as the dtype of the current tensor.
+
+        Example:
+        >>> t = Tensor([1, 2, 3], dtype=float)
+        >>> t2 = Tensor([4, 5, 6], dtype=float)
+        >>> t.data = t2
+        >>> print(t.data)
+        Tensor([4, 5, 6])
+        """
+        assert isinstance(value, Tensor)
+        assert value.dtype == self.dtype, "The dtype of the given tensor (%s) is not the same as the dtype of the current tensor (%s)." % (
+            value.dtype,
+            self.dtype,
+        )
+        self.data = value.realize_data()
+
+    
     @property
     def shape(self):
         """
@@ -665,7 +770,6 @@ class Tensor(Value):
         Returns:
         A tuple representing the shape of this tensor.
         """
-        retu
         return self.realize_data().shape
 
     @property
@@ -677,6 +781,29 @@ class Tensor(Value):
         The data type of this tensor.
         """
         return self.realize_data().dtype
+    
+    @property
+    def device(self):
+        """
+        Returns the device on which the tensor data is stored.
+
+        Returns:
+        The device on which the tensor data is stored. If the data is stored in a NumPy array, returns a CPU device.
+
+        Example:
+        >>> t = Tensor([1, 2, 3])
+        >>> device = t.device
+        >>> print(device)
+        cpu
+        """
+        
+        data = self.realize_data()
+        if ARRAY_API is numpy: return cpu()
+        return data.device
+    
+    def backward(self, out_grad: Optional['Tensor']=None) -> None:
+        out_grad = out_grad if not out_grad else Tensor(ARRAY_API.ones(self.shape))
+        self._backward(self, out_grad)
     
     def __add__(self, other: Union['Tensor', int, float]) -> 'Tensor':
         """
@@ -723,4 +850,8 @@ class Tensor(Value):
 
         else:
             raise ValueError(f"Unsupported operand type for *: '{type(self).__name__}' and '{type(other).__name__}'")
+            
+            
+    def _backward(self, out_grad: 'Tensor') -> None:
+        pass
 

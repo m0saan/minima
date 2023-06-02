@@ -9,7 +9,7 @@ __all__ = ['EWiseAdd', 'add', 'AddScalar', 'add_scalar', 'EWiseMul', 'multiply',
 from numbers import Number
 from typing import Optional, List
 from .autograd import NDArray
-from .autograd import Operator, Tensor, Value, TensorOp
+from .autograd import Operator, Tensor, Value, TensorOp, Tuple, Union
 from collections import namedtuple
 from typing import NamedTuple
 import numpy
@@ -20,54 +20,223 @@ import numpy as ARRAY_API
 
 # %% ../nbs/01_operators.ipynb 3
 class EWiseAdd(TensorOp):
-    def compute(self, a: NDArray, b: NDArray):
+    """
+    Performs element-wise addition of two tensors.
+
+    Example:
+    >>> a = Tensor([1, 2, 3])
+    >>> b = Tensor([4, 5, 6])
+    >>> op = EWiseAdd()
+    >>> result = op.compute(a, b)
+    >>> print(result)
+    Tensor([5, 7, 9])
+    """
+    def compute(self, a: NDArray, b: NDArray) -> NDArray:
+        """
+        Computes the element-wise sum of two tensors.
+
+        Args:
+        - a: The first tensor.
+        - b: The second tensor.
+
+        Returns:
+        The element-wise sum of a and b.
+        """
         return a + b
 
-    def gradient(self, out_grad: Tensor, node: Tensor):
+    def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor, Tensor]:
+        """
+        Computes the gradient of the element-wise addition operation.
+
+        Args:
+        - out_grad: The gradient of the output of the operation.
+        - node: The node in the computational graph where the operation was performed.
+
+        Returns:
+        The gradients with respect to the inputs.
+        """
         return out_grad, out_grad
 
+def add(a: Tensor, b: Tensor) -> Tensor:
+    """
+    Adds two tensors element-wise.
 
-def add(a, b):
+    Args:
+    - a: The first tensor.
+    - b: The second tensor.
+
+    Returns:
+    The element-wise sum of a and b.
+    """
     return EWiseAdd()(a, b)
 
 # %% ../nbs/01_operators.ipynb 4
 class AddScalar(TensorOp):
-    def __init__(self, scalar):
+    """
+    Performs addition of a tensor and a scalar.
+
+    Example:
+    >>> a = Tensor([1, 2, 3])
+    >>> op = AddScalar(5)
+    >>> result = op.compute(a)
+    >>> print(result)
+    Tensor([6, 7, 8])
+    """
+    def __init__(self, scalar: Union[int, float]):
+        """
+        Initializes the operation with a scalar.
+
+        Args:
+        - scalar: The scalar to add to the tensor.
+        """
         self.scalar = scalar
 
-    def compute(self, a: NDArray):
+    def compute(self, a: NDArray) -> NDArray:
+        """
+        Computes the sum of a tensor and a scalar.
+
+        Args:
+        - a: The tensor.
+
+        Returns:
+        The sum of a and the scalar.
+        """
         return a + self.scalar
 
-    def gradient(self, out_grad: Tensor, node: Tensor):
+    def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor]:
+        """
+        Computes the gradient of the addition operation.
+
+        Args:
+        - out_grad: The gradient of the output of the operation.
+        - node: The node in the computational graph where the operation was performed.
+
+        Returns:
+        The gradient with respect to the input.
+        """
         return (out_grad, )
 
+def add_scalar(a: Tensor, scalar: Union[int, float]) -> Tensor:
+    """
+    Adds a scalar to a tensor.
 
-def add_scalar(a, scalar):
+    Args:
+    - a: The tensor.
+    - scalar: The scalar to add.
+
+    Returns:
+    The sum of a and the scalar.
+    """
     return AddScalar(scalar)(a)
 
 # %% ../nbs/01_operators.ipynb 5
 class EWiseMul(TensorOp):
-    def compute(self, a: NDArray, b: NDArray):
+    """
+    Performs element-wise multiplication of two tensors.
+
+    Example:
+    >>> a = Tensor([1, 2, 3])
+    >>> b = Tensor([4, 5, 6])
+    >>> op = EWiseMul()
+    >>> result = op.compute(a, b)
+    >>> print(result)
+    Tensor([4, 10, 18])
+    """
+    def compute(self, a: NDArray, b: NDArray) -> NDArray:
+        """
+        Computes the element-wise product of two tensors.
+
+        Args:
+        - a: The first tensor.
+        - b: The second tensor.
+
+        Returns:
+        The element-wise product of a and b.
+        """
         return a * b
 
-    def gradient(self, out_grad: Tensor, node: Tensor):
+    def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor, Tensor]:
+        """
+        Computes the gradient of the element-wise multiplication operation.
+
+        Args:
+        - out_grad: The gradient of the output of the operation.
+        - node: The node in the computational graph where the operation was performed.
+
+        Returns:
+        The gradients with respect to the inputs.
+        """
         lhs, rhs = node.inputs
         return out_grad * rhs, out_grad * lhs
 
+def multiply(a: Tensor, b: Tensor) -> Tensor:
+    """
+    Multiplies two tensors element-wise.
 
-def multiply(a, b):
+    Args:
+    - a: The first tensor.
+    - b: The second tensor.
+
+    Returns:
+    The element-wise product of a and b.
+    """
     return EWiseMul()(a, b)
 
 # %% ../nbs/01_operators.ipynb 6
 class MulScalar(TensorOp):
-    def __init__(self, scalar):
+    """
+    Performs multiplication of a tensor and a scalar.
+
+    Example:
+    >>> a = Tensor([1, 2, 3])
+    >>> op = MulScalar(5)
+    >>> result = op.compute(a)
+    >>> print(result)
+    Tensor([5, 10, 15])
+    """
+    def __init__(self, scalar: Union[int, float]):
+        """
+        Initializes the operation with a scalar.
+
+        Args:
+        - scalar: The scalar to multiply the tensor with.
+        """
         self.scalar = scalar
 
-    def compute(self, a: NDArray):
+    def compute(self, a: NDArray) -> NDArray:
+        """
+        Computes the product of a tensor and a scalar.
+
+        Args:
+        - a: The tensor.
+
+        Returns:
+        The product of a and the scalar.
+        """
         return a * self.scalar
 
-    def gradient(self, out_grad: Tensor, node: Tensor):
+    def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor]:
+        """
+        Computes the gradient of the multiplication operation.
+
+        Args:
+        - out_grad: The gradient of the output of the operation.
+        - node: The node in the computational graph where the operation was performed.
+
+        Returns:
+        The gradient with respect to the input.
+        """
         return (out_grad * self.scalar, )
     
-def mul_scalar(a, scalar):
+def mul_scalar(a: Tensor, scalar: Union[int, float]) -> Tensor:
+    """
+    Multiplies a tensor by a scalar.
+
+    Args:
+    - a: The tensor.
+    - scalar: The scalar to multiply.
+
+    Returns:
+    The product of a and the scalar.
+    """
     return MulScalar(scalar)(a)

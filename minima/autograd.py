@@ -34,7 +34,7 @@ class Value:
         requires_grad (bool)
     """
     def __init__(self, data, _children=(), _op='', label=''):
-        self.data = data
+        self._data = data
         self.grad = 0
         self._prev = set(_children)
         self._op = _op
@@ -42,12 +42,12 @@ class Value:
 
     def __add__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data + other.data, (self, other), '+')
+        out = Value(self._data + other.data, (self, other), '+')
         return out
 
     def __mul__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data * other.data, (self, other), '*')
+        out = Value(self._data * other.data, (self, other), '*')
         return out
 
 
@@ -68,7 +68,7 @@ class Value:
         requires_grad (bool)
     """
     def __init__(self, data, _children=(), _op='', label=''):
-        self.data = data
+        self._data = data
         self.grad = 0
         self._backward = lambda: None
         self._prev = set(_children)
@@ -77,7 +77,7 @@ class Value:
     
     def __add__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data + other.data, (self, other), '+')
+        out = Value(self._data + other.data, (self, other), '+')
 
         def _backward():
             self.grad += out.grad
@@ -88,17 +88,17 @@ class Value:
 
     def __mul__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data * other.data, (self, other), '*')
+        out = Value(self._data * other.data, (self, other), '*')
 
         def _backward():
             self.grad += other.data * out.grad
-            other.grad += self.data * out.grad
+            other.grad += self._data * out.grad
         out._backward = _backward
 
         return out
     
     def __repr__(self):
-        return f"Value(data={self.data}, grad={self.grad})"
+        return f"Value(data={self._data}, grad={self.grad})"
 
 # %% ../nbs/00_autograd.ipynb 67
 class Value:
@@ -116,7 +116,7 @@ class Value:
         requires_grad (bool)
     """
     def __init__(self, data, _children=(), _op='', label=''):
-        self.data = data
+        self._data = data
         self.grad = 0
         self._backward = lambda: None
         self._prev = set(_children)
@@ -125,7 +125,7 @@ class Value:
     
     def __add__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data + other.data, (self, other), '+')
+        out = Value(self._data + other.data, (self, other), '+')
 
         def _backward():
             self.grad += out.grad
@@ -136,17 +136,17 @@ class Value:
 
     def __mul__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data * other.data, (self, other), '*')
+        out = Value(self._data * other.data, (self, other), '*')
 
         def _backward():
             self.grad += other.data * out.grad
-            other.grad += self.data * out.grad
+            other.grad += self._data * out.grad
         out._backward = _backward
 
         return out
     
     def __repr__(self):
-        return f"Value(data={self.data}, grad={self.grad})"
+        return f"Value(data={self._data}, grad={self.grad})"
     
     def backward(self):
 
@@ -205,7 +205,7 @@ class Value:
         - label (str): a label for this node, used for debugging and visualization purposes
         """
         
-        self.data = data
+        self._data = data
         self._prev = set(children)
         self._op = op
         self.grad = 0.0
@@ -219,7 +219,7 @@ class Value:
         Returns:
         - str: a string representation of this Value object
         """
-        return f"Value({self.data})"
+        return f"Value({self._data})"
     
     def __add__(self, other):
         """
@@ -234,7 +234,7 @@ class Value:
         
         other = Value(other) if not isinstance(other, Value) else other
         
-        out  = Value(self.data + other.data, children=(self, other), op='+')
+        out  = Value(self._data + other.data, children=(self, other), op='+')
         
         def _backward():
             self.grad += 1 * out.grad
@@ -291,11 +291,11 @@ class Value:
         """
         
         other = Value(other) if not isinstance(other, Value) else other
-        out =  Value(self.data * other.data, children=(self, other), op='*')
+        out =  Value(self._data * other.data, children=(self, other), op='*')
         
         def _backward():
             self.grad += other.data * out.grad
-            other.grad += self.data * out.grad
+            other.grad += self._data * out.grad
             
         out._backward = _backward
         return out
@@ -334,9 +334,9 @@ class Value:
         """
         assert isinstance(other, (float, int)), "other must be a scalar"
         
-        out = Value(self.data ** other, children=(self, ), op='**')
+        out = Value(self._data ** other, children=(self, ), op='**')
         
-        def _backward(): self.grad += other * self.data ** (other - 1) * out.grad
+        def _backward(): self.grad += other * self._data ** (other - 1) * out.grad
         out._backward = _backward
         
         return out
@@ -359,10 +359,10 @@ class Value:
         - The _backward() function is assigned as an attribute to the output object for later use during backpropagation.
         """
         
-        x = math.exp(self.data)
+        x = math.exp(self._data)
         out = Value(x, children=(self,), op='exp')
         
-        def _backward(): self.grad += x * out.grad # x = exp(self.data) so x' = x (derivative of exp(x) is exp(x))
+        def _backward(): self.grad += x * out.grad # x = exp(self._data) so x' = x (derivative of exp(x) is exp(x))
         out._backward = _backward
         
         return out
@@ -372,7 +372,7 @@ class Value:
         Applies the hyperbolic tangent function to the data of this `Value` object and returns a new `Value` object 
         with the resulting data. This operation is an element-wise operation.
         """
-        out = Value(torch.tanh(torch.tensor(self.data)), children=(self,), op='tanh')
+        out = Value(torch.tanh(torch.tensor(self._data)), children=(self,), op='tanh')
         def _backward(): self.grad += (1 - out.data ** 2) * out.grad
         out._backward = _backward
         
@@ -383,12 +383,29 @@ class Value:
         Applies the rectified linear unit function to the data of this `Value` object and returns a new `Value` object 
         with the resulting data. This operation is an element-wise operation.
         """
-        out = Value(max(0, self.data), children=(self,), op='relu')
+        out = Value(max(0, self._data), children=(self,), op='relu')
         
         def _backward(): self.grad += (out.data > 0) * out.grad
         out._backward = _backward
         
         return out
+    
+    @property
+    def data(self):
+        """
+        Returns a tensor that shares the data with the current tensor but is detached from the computational graph.
+
+        Example:
+        >>> t = Tensor([1, 2, 3], requires_grad=True)
+        >>> print(t.data)
+        Tensor([1, 2, 3])
+        """
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        self._data = value
+
     
     def item(self):
         """
@@ -401,7 +418,7 @@ class Value:
             float: The scalar value being stored in the current Value as a Python float.
         
         """
-        return self.data
+        return self._data
     
     def is_leaf(self):
         return self.op is None
@@ -573,7 +590,7 @@ class Tensor(Value):
             device = device if device else cpu()
             data = Tensor._array_from_numpy(array, device=device, dtype=dtype)
 
-        self._init(None, set(), data=data, requires_grad=requires_grad, )
+        self._init(None, (), data=data, requires_grad=requires_grad, )
         
     def __repr__(self):
         return "minima.Tensor(" + str(self.realize_data()) + ")"
@@ -609,7 +626,7 @@ class Tensor(Value):
         if requires_grad is None:
             requires_grad = any(child.requires_grad for child in children)
         self._op = op
-        self.data = data
+        self._data = data
         self.children = children
         self.num_outputs = num_outputs
         self.requires_grad = requires_grad
@@ -623,9 +640,9 @@ class Tensor(Value):
         The actual data of this tensor.
         """
         
-        if self.data is None:
-            self.data = self._op.compute(*[child.realize_data() for child in self.children])
-        return self.data
+        if self._data is None:
+            self._data = self._op.compute(*[child.realize_data() for child in self.children])
+        return self._data
     
     @staticmethod
     def _array_from_numpy(numpy_array, device, dtype):
@@ -754,12 +771,13 @@ class Tensor(Value):
         >>> print(t.data)
         Tensor([4, 5, 6])
         """
+        print(type(value), type(Tensor))
         assert isinstance(value, Tensor)
         assert value.dtype == self.dtype, "The dtype of the given tensor (%s) is not the same as the dtype of the current tensor (%s)." % (
             value.dtype,
             self.dtype,
         )
-        self.data = value.realize_data()
+        self._data = value.realize_data()
 
     
     @property
@@ -823,10 +841,39 @@ class Tensor(Value):
             return mi.operators.EWiseAdd()(self, other)
 
         elif isinstance(other, (int, float)):
-            return mi.operators.AddScalar(other)(self)
+            return mi.operators.AddScalar(scalar=other)(self)
 
         else:
             raise ValueError(f"Unsupported operand type for +: '{type(self).__name__}' and '{type(other).__name__}'")
+    
+    def __sub__(self, other: Union['Tensor', int, float]) -> 'Tensor':
+        """
+        Implements the subtraction operation between two Tensors or a Tensor and a scalar.
+
+        Args:
+        - other (Tensor or scalar): the other Tensor or scalar to subtract from this one
+
+        Returns:
+        - Tensor: a new Tensor object representing the difference between this Tensor and the other one
+
+        Raises:
+        - AssertionError: If the two Tensors don't have the same shape
+        - ValueError: If the other operand is neither a Tensor nor a scalar
+        """
+        if isinstance(other, Tensor):
+            # Ensure both tensors have the same shape for subtraction
+            if self.shape != other.shape:
+                raise AssertionError(f"Tensors must be of the same shape for subtraction. Got {self.shape} and {other.shape}.")
+
+            return mi.operators.EWiseAdd()(negate(self), other)
+
+        elif isinstance(other, (int, float)):
+            return mi.operators.AddScalar(scalar=-other)(self)
+
+        else:
+            raise ValueError(f"Unsupported operand type for -: '{type(self).__name__}' and '{type(other).__name__}'")
+
+
             
     def __mul__(self, other: Union['Tensor', int, float]) -> 'Tensor':
         """
@@ -846,12 +893,75 @@ class Tensor(Value):
             return mi.operators.EWiseMul()(self, other)
 
         elif isinstance(other, (int, float)):
-            return mi.operators.MulScalar(other)(self)
+            return mi.operators.MulScalar(scalar=other)(self)
 
         else:
             raise ValueError(f"Unsupported operand type for *: '{type(self).__name__}' and '{type(other).__name__}'")
             
-            
+    def __pow__(self, other):
+        
+        if isinstance(other, Tensor):
+            raise NotImplementedError()        
+        if isinstance(other, (int, float)):
+            return mi.operators.PowerScalar(scalar=other)(self)
+        else:
+            raise ValueError(f"Unsupported operand type for ^: '{type(self).__name__}' and '{type(other).__name__}'")
+
+    def __truediv__(self, other: Union['Tensor', int, float]) -> 'Tensor':
+        """
+        Implements the division operation between two Tensors or a Tensor and a scalar.
+
+        Args:
+        - other (Tensor or scalar): the other Tensor or scalar to divide to this one
+
+        Returns:
+        - Tensor: a new Tensor object representing the result of division of this Tensor and the other one
+        """
+        if isinstance(other, Tensor):
+            # Ensure both tensors have the same shape for addition
+            if self.shape != other.shape:
+                raise AssertionError(f"Tensors must be of the same shape for addition. Got {self.shape} and {other.shape}.")
+
+            return mi.operators.EWiseDiv()(self, other)
+
+        elif isinstance(other, (int, float)):
+            return mi.operators.DivScalar(scalar=other)(self)
+
+        else:
+            raise ValueError(f"Unsupported operand type for /: '{type(self).__name__}' and '{type(other).__name__}'")
+
+    
+    def __rtruediv__(self, other): # other / self
+        """
+        Implements the right division operation between a scalar or a Tensor and this Tensor.
+
+        Args:
+        - other (Tensor or scalar): the other Tensor or scalar to divide by this one
+
+        Returns:
+        - Tensor: a new Tensor object representing the result of the division
+
+        Example:
+        - If the method is called as `other.__rtruediv__(self)`, this corresponds to `other / self` in usual operations.
+        """
+        return self.__pow__(-1).__mul__(other)
+        # other * self**-1
+
+    def __matmul__(self, other):
+        """
+        Implements the matrix multiplication operation between this Tensor and another Tensor.
+
+        Args:
+        - other (Tensor): the other Tensor to multiply with this one
+
+        Returns:
+        - Tensor: a new Tensor object representing the result of the matrix multiplication
+
+        Example:
+        - If the method is called as `self.__matmul__(other)`, this corresponds to `self @ other` in usual operations.
+        """
+        return mi.ops.MatMul()(self, other)
+
     def _backward(self, out_grad: 'Tensor') -> None:
         pass
 

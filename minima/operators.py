@@ -18,7 +18,7 @@ import numpy
 # as the backend for our computations, this line will change in later homeworks
 import numpy as ARRAY_API
 
-# %% ../nbs/01_operators.ipynb 3
+# %% ../nbs/01_operators.ipynb 7
 class EWiseAdd(TensorOp):
     """
     Performs element-wise addition of two tensors.
@@ -31,6 +31,7 @@ class EWiseAdd(TensorOp):
     >>> print(result)
     Tensor([5, 7, 9])
     """
+    
     def compute(self, a: NDArray, b: NDArray) -> NDArray:
         """
         Computes the element-wise sum of two tensors.
@@ -55,7 +56,7 @@ class EWiseAdd(TensorOp):
         Returns:
         The gradients with respect to the inputs.
         """
-        return out_grad, out_grad
+        return (out_grad, out_grad)
 
 def add(a: Tensor, b: Tensor) -> Tensor:
     """
@@ -70,7 +71,7 @@ def add(a: Tensor, b: Tensor) -> Tensor:
     """
     return EWiseAdd()(a, b)
 
-# %% ../nbs/01_operators.ipynb 4
+# %% ../nbs/01_operators.ipynb 11
 class AddScalar(TensorOp):
     """
     Performs addition of a tensor and a scalar.
@@ -129,7 +130,7 @@ def add_scalar(a: Tensor, scalar: Union[int, float]) -> Tensor:
     """
     return AddScalar(scalar)(a)
 
-# %% ../nbs/01_operators.ipynb 5
+# %% ../nbs/01_operators.ipynb 14
 class EWiseMul(TensorOp):
     """
     Performs element-wise multiplication of two tensors.
@@ -166,8 +167,8 @@ class EWiseMul(TensorOp):
         Returns:
         The gradients with respect to the inputs.
         """
-        lhs, rhs = node.inputs
-        return out_grad * rhs, out_grad * lhs
+        a, b = node.inputs
+        return out_grad * b, out_grad * a
 
 def multiply(a: Tensor, b: Tensor) -> Tensor:
     """
@@ -182,7 +183,7 @@ def multiply(a: Tensor, b: Tensor) -> Tensor:
     """
     return EWiseMul()(a, b)
 
-# %% ../nbs/01_operators.ipynb 6
+# %% ../nbs/01_operators.ipynb 17
 class MulScalar(TensorOp):
     """
     Performs multiplication of a tensor and a scalar.

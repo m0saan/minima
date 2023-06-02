@@ -40,8 +40,10 @@ To install with pip, use: `pip install minima`.
 If you plan to develop Minima yourself, or want to be on the cutting
 edge, you can use an editable install.
 
-    git clone https://github.com/yourusername/minima
-    pip install -e "minima[dev]"
+``` bash
+git clone https://github.com/m0saan/minima
+pip install .
+```
 
 ## Features
 

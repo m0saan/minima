@@ -204,6 +204,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#device" id="toc-device" class="nav-link" data-scroll-target="#device">Device</a></li>
   <li><a href="#operator" id="toc-operator" class="nav-link" data-scroll-target="#operator">Operator</a></li>
   <li><a href="#tensorop" id="toc-tensorop" class="nav-link" data-scroll-target="#tensorop">TensorOp</a></li>
+  <li><a href="#tensor" id="toc-tensor" class="nav-link" data-scroll-target="#tensor">Tensor</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/m0saan/minima/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -253,7 +254,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>In the context of the function <code>d = a*b + c</code> which we’re going to use below, since <code>a</code> is the variable and <code>b</code> and <code>c</code> are constants, the derivative of <code>d</code> with respect to <code>a</code> is just <code>b</code>. This can be written in LaTeX as:</p>
 <p><span class="math display">\[ \frac{{dd}}{{da}} = b \]</span></p>
 <p>we begin by assigning values to three variables <code>a</code>, <code>b</code>, and <code>c</code>. We then create a fourth variable, <code>d</code>, which is equal to the product of <code>a</code> and <code>b</code>, added to <code>c</code>. When you execute this cell, it should display the value of <code>d</code>.</p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="dv">4</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="op">-</span><span class="dv">2</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> <span class="dv">11</span></span>
@@ -261,7 +262,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>we define a function <code>f_a(a,b,c)</code>, which helps us estimate the slope of the function at the point <code>a</code>. The function first calculates <code>d1</code> using the given inputs, <code>a</code>, <code>b</code>, and <code>c</code>. Then it increments <code>a</code> by a small value <code>h</code> and recalculates the value <code>d2</code>. The function then prints the original <code>d1</code>, the new <code>d2</code>, and the estimated slope which is <code>(d2 - d1) / h</code>.</p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_a(a,b,c):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> <span class="fl">0.01</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    d1 <span class="op">=</span> a<span class="op">*</span>b <span class="op">+</span> c</span>
@@ -276,7 +277,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>that states that the derivative of <code>d</code> with respect to <code>a</code>, denoted as <code>(db/da)</code>, is analytically equal to <code>b</code>. This is because in the expression <code>d = a*b + c</code>, the coefficient of <code>a</code> is <code>b</code>, so by the power rule of differentiation, the derivative is <code>b</code>. In this case, <code>b</code> equals <code>-2</code>.</p>
 <p>Now if we do this with <code>b</code></p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_b(a,b,c):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> <span class="fl">0.01</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    d1 <span class="op">=</span> a<span class="op">*</span>b <span class="op">+</span> c</span>
@@ -301,7 +302,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>In a deep learning framework, when we define our model and loss function, the framework uses auto grad to build a computational graph under the hood. This graph captures all the computations that are done in the forward pass (i.e., when we pass our inputs through the model to get the output). Then, when we need to compute the gradients during the backward pass, the framework uses this computational graph and the chain rule from calculus to compute the gradients automatically. This process is often referred to as backpropagation.</p>
 <p>The main advantage of using auto grad in deep learning is that it allows us to focus on designing our models and defining our loss functions without worrying about the details of computing the gradients. This simplifies our code, reduces the chance of errors, and allows for greater flexibility in designing complex models. In fact, with auto grad, we can easily experiment with new types of models and loss functions, as we can rely on the framework to correctly compute the gradients no matter how complex our design is.</p>
 <p>Let’s start building a mini autograd engine</p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> trace(root):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    nodes, edges <span class="op">=</span> <span class="bu">set</span>(), <span class="bu">set</span>()</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> build(v):</span>
@@ -348,7 +349,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Represents a node within a computational graph.</p>
 <p>This class encapsulates a single value and its relationships in the graph, making it easy to track and manage the value’s dependencies, the operation that produced it, and whether it requires a gradient for backpropagation. It’s central to the functioning of automatic differentiation within deep learning frameworks.</p>
 <p>Attributes: op (Operator) _prev (Set[‘Value’]) cached_data (NDArray) requires_grad (bool)</p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> Value(<span class="fl">2.0</span>, label<span class="op">=</span><span class="st">'a'</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> Value(<span class="op">-</span><span class="fl">3.0</span>, label<span class="op">=</span><span class="st">'b'</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> Value(<span class="fl">10.0</span>, label<span class="op">=</span><span class="st">'c'</span>)</span>
@@ -371,7 +372,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="manual-gradient">Manual gradient</h2>
 <section id="base-case-l-grad" class="level3">
 <h3 class="anchored" data-anchor-id="base-case-l-grad">base case (<code>L grad</code>)</h3>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lol():</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> <span class="fl">0.001</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -400,13 +401,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>lol()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>sure enough it’s 1</p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>L.grad <span class="op">=</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="f" class="level4">
 <h4 class="anchored" data-anchor-id="f">f</h4>
 <p>Here is a generic version of <code>lol</code></p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lol(label):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> foo(v, label):</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> v.label <span class="op">==</span> label: v.data <span class="op">+=</span> h</span>
@@ -437,17 +438,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>lol(<span class="st">'f'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>f.grad <span class="op">=</span> <span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>lol(<span class="st">'d'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>d.grad <span class="op">=</span> <span class="op">-</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s draw what we have up to this point</p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Sure, here’s the step by step derivation for each of the variables:</p>
@@ -494,34 +495,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><span class="math display">\[
 \frac{dL}{dd} = f \cdot \frac{df}{df} = f
 \]</span></p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>lol(<span class="st">'e'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>e.grad <span class="op">=</span> <span class="op">-</span><span class="dv">2</span> <span class="co"># 1 * d.grad</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lol(<span class="st">'c'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>c.grad <span class="op">=</span> <span class="op">-</span><span class="dv">2</span> <span class="co"># 1 * d.grad</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>lol(<span class="st">'a'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>a.grad <span class="op">=</span> <span class="dv">6</span>  <span class="co"># b * e.grad</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>lol(<span class="st">'b'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>b.grad <span class="op">=</span> <span class="op">-</span><span class="dv">4</span> <span class="co"># a * e.grad</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
@@ -536,7 +537,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Represents a node within a computational graph.</p>
 <p>This class encapsulates a single value and its relationships in the graph, making it easy to track and manage the value’s dependencies, the operation that produced it, and whether it requires a gradient for backpropagation. It’s central to the functioning of automatic differentiation within deep learning frameworks.</p>
 <p>Attributes: op (Operator) _prev (Set[‘Value’]) cached_data (NDArray) requires_grad (bool)</p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> Value(<span class="fl">2.0</span>, label<span class="op">=</span><span class="st">'a'</span>)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> Value(<span class="op">-</span><span class="fl">3.0</span>, label<span class="op">=</span><span class="st">'b'</span>)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> Value(<span class="fl">10.0</span>, label<span class="op">=</span><span class="st">'c'</span>)</span>
@@ -547,37 +548,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>L.grad <span class="op">=</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>L._backward()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>d._backward()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>c._backward()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We expect that nothing will happen</p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>e._backward()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>sure enough, exactly as we did before</p>
 <p>We can do thid process automatically using topo sort algorithms, which’s will give us the correct order on which to call _backward on</p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> Value(<span class="fl">2.0</span>, label<span class="op">=</span><span class="st">'a'</span>)</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> Value(<span class="op">-</span><span class="fl">3.0</span>, label<span class="op">=</span><span class="st">'b'</span>)</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> Value(<span class="fl">10.0</span>, label<span class="op">=</span><span class="st">'c'</span>)</span>
@@ -588,7 +589,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># topological order all of the children in the graph</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>topo <span class="op">=</span> []</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>visited <span class="op">=</span> <span class="bu">set</span>()</span>
@@ -601,16 +602,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>build_topo(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>topo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># go one variable at a time and apply the chain rule to get its gradient</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>L.grad <span class="op">=</span> <span class="dv">1</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> v <span class="kw">in</span> <span class="bu">reversed</span>(topo):</span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    v._backward()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>So let’s now update the Value class with this logic</p>
@@ -625,7 +626,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Represents a node within a computational graph.</p>
 <p>This class encapsulates a single value and its relationships in the graph, making it easy to track and manage the value’s dependencies, the operation that produced it, and whether it requires a gradient for backpropagation. It’s central to the functioning of automatic differentiation within deep learning frameworks.</p>
 <p>Attributes: op (Operator) _prev (Set[‘Value’]) cached_data (NDArray) requires_grad (bool)</p>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> Value(<span class="fl">2.0</span>, label<span class="op">=</span><span class="st">'a'</span>)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> Value(<span class="op">-</span><span class="fl">3.0</span>, label<span class="op">=</span><span class="st">'b'</span>)</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> Value(<span class="fl">10.0</span>, label<span class="op">=</span><span class="st">'c'</span>)</span>
@@ -636,10 +637,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>L.backward()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-tags="[]">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
@@ -732,6 +733,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._prev <span class="op">=</span> op</span>
 <span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.cached_data <span class="op">=</span> cached_data</span>
 <span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.requires_grad <span class="op">=</span> requires_grad</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L509" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tensor" class="level3">
+<h3 class="anchored" data-anchor-id="tensor">Tensor</h3>
+<blockquote class="blockquote">
+<pre><code> Tensor (array, device:Optional[__main__.Device]=None, dtype=None,
+         requires_grad=True, **kwargs)</code></pre>
+</blockquote>
+<p>A Tensor represents a multidimensional array of values in a computational graph.</p>
+<p>Attributes: - data: The actual data of the tensor. It is computed lazily. - children: Other tensors that this tensor depends on for computing its value. - requires_grad: Whether this tensor needs to compute gradients.</p>
+<p>Methods: - realize_data: Computes and returns the actual data for this tensor. - shape: Returns the shape of this tensor. - dtype: Returns the data type of this tensor.</p>
+<p>Example: &gt;&gt;&gt; t1 = Tensor([[1.0, 2.0], [3.0, 4.0]]) &gt;&gt;&gt; print(t1.shape) (2, 2) &gt;&gt;&gt; print(t1.dtype) float64</p>
 
 
 </section>

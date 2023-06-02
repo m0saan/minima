@@ -507,7 +507,26 @@ class TensorOp(Operator):
 
 # %% ../nbs/00_autograd.ipynb 77
 class Tensor(Value):
-    """A value in the computational graph."""
+    """
+    A Tensor represents a multidimensional array of values in a computational graph.
+
+    Attributes:
+    - data: The actual data of the tensor. It is computed lazily.
+    - children: Other tensors that this tensor depends on for computing its value.
+    - requires_grad: Whether this tensor needs to compute gradients.
+
+    Methods:
+    - realize_data: Computes and returns the actual data for this tensor.
+    - shape: Returns the shape of this tensor.
+    - dtype: Returns the data type of this tensor.
+
+    Example:
+    >>> t1 = Tensor([[1.0, 2.0], [3.0, 4.0]])
+    >>> print(t1.shape)
+    (2, 2)
+    >>> print(t1.dtype)
+    float64
+    """
 
     def __init__(
         self,
@@ -518,6 +537,20 @@ class Tensor(Value):
         requires_grad=True,
         **kwargs
     ):
+        
+        """
+        Initializes the tensor with given array, device, and data type.
+
+        Args:
+        - array: A numeric array-like object (e.g., list, numpy array, or another tensor).
+        - device: The device where the tensor should be allocated.
+        - dtype: The desired data type for the tensor.
+        - requires_grad: Whether the tensor requires gradient computation.
+
+        Returns:
+        None.
+        """
+        
         if isinstance(array, Tensor):
             if device is None:
                 device = array.device
@@ -551,6 +584,20 @@ class Tensor(Value):
         data: List[object] = None,
         requires_grad: Optional[bool] = None
     ):
+        """
+        Internal initialization function for the Tensor.
+
+        Args:
+        - op: The operator that produces this tensor.
+        - children: Set of tensors that this tensor depends on.
+        - num_outputs: Number of outputs that the operator produces.
+        - data: Actual data of the tensor, computed lazily.
+        - requires_grad: Whether this tensor requires gradient computation.
+
+        Returns:
+        None.
+        """
+        
         global TENSOR_COUNTER
         TENSOR_COUNTER += 1
         if requires_grad is None:
@@ -562,18 +609,49 @@ class Tensor(Value):
         self.requires_grad = requires_grad
         
     def realize_data(self):
+        """
+        If the data of this tensor has not been computed, computes and caches it.
+        Otherwise, returns the cached data.
+
+        Returns:
+        The actual data of this tensor.
+        """
+        
         if self.data is None:
             self.data = self._op.compute(*[child.realize_data() for child in self.children])
         return self.data
     
     @staticmethod
     def _array_from_numpy(numpy_array, device, dtype):
+        """
+        Converts a numpy array into an array suitable for the given device and data type.
+
+        Args:
+        - numpy_array: The numpy array to convert.
+        - device: The device where the converted array should be allocated.
+        - dtype: The desired data type for the converted array.
+
+        Returns:
+        The converted array.
+        """
+
         if ARRAY_API is numpy:
             return numpy.array(numpy_array, dtype=dtype)
         return ARRAY_API.array(numpy_array, device=device, dtype=dtype)
     
     @staticmethod
     def make_from_op(op: Operator, children: Tuple["Value"]):
+        """
+        Creates a new tensor from a given operator and its children.
+
+        Args:
+        - op: The operator that produces the tensor.
+        - children: The tensors that the operator depends on.
+
+        Returns:
+        The newly created tensor.
+        """
+        
         tensor = Tensor.__new__(Tensor)
         tensor._init(op, children)
         if not LAZY_MODE:
@@ -582,10 +660,23 @@ class Tensor(Value):
     
     @property
     def shape(self):
+        """
+        Returns the shape of this tensor.
+
+        Returns:
+        A tuple representing the shape of this tensor.
+        """
+        retu
         return self.realize_data().shape
 
     @property
     def dtype(self):
+        """
+        Returns the data type of this tensor.
+
+        Returns:
+        The data type of this tensor.
+        """
         return self.realize_data().dtype
     
     def __add__(self, other: Union['Tensor', int, float]) -> 'Tensor':

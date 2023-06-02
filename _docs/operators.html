@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Fill in a module description here">
+<meta name="description" content="The operators module in this framework provides a collection of tensor operations for building computational graphs in deep learning. Each class in this module represents a different type of operation that can be performed on tensors, such as element-wise addition, scalar multiplication, division, exponentiation, etc.">
 
 <title>minima - operators</title>
 <style>
@@ -127,10 +127,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="minima - operators">
-<meta property="og:description" content="Fill in a module description here">
+<meta property="og:description" content="The `operators` module in this framework provides a collection of tensor operations for building computational graphs in deep learning.">
 <meta property="og:site-name" content="minima">
 <meta name="twitter:title" content="minima - operators">
-<meta name="twitter:description" content="Fill in a module description here">
+<meta name="twitter:description" content="The `operators` module in this framework provides a collection of tensor operations for building computational graphs in deep learning.">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -207,12 +207,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#mul_scalar" id="toc-mul_scalar" class="nav-link" data-scroll-target="#mul_scalar">mul_scalar</a></li>
   <li><a href="#mulscalar" id="toc-mulscalar" class="nav-link" data-scroll-target="#mulscalar">MulScalar</a></li>
   </ul></li>
-  <li><a href="#negation" id="toc-negation" class="nav-link" data-scroll-target="#negation">Negation</a></li>
-  <li><a href="#exp" id="toc-exp" class="nav-link" data-scroll-target="#exp">Exp</a></li>
-  <li><a href="#relu" id="toc-relu" class="nav-link" data-scroll-target="#relu">ReLU</a></li>
-  <li><a href="#power-scalar" id="toc-power-scalar" class="nav-link" data-scroll-target="#power-scalar">Power Scalar</a></li>
-  <li><a href="#element-wise-divide" id="toc-element-wise-divide" class="nav-link" data-scroll-target="#element-wise-divide">Element Wise Divide</a></li>
-  <li><a href="#divide-scalar" id="toc-divide-scalar" class="nav-link" data-scroll-target="#divide-scalar">Divide Scalar</a></li>
+  <li><a href="#negation" id="toc-negation" class="nav-link" data-scroll-target="#negation">Negation</a>
+  <ul class="collapse">
+  <li><a href="#negate" id="toc-negate" class="nav-link" data-scroll-target="#negate">negate</a></li>
+  <li><a href="#negate-1" id="toc-negate-1" class="nav-link" data-scroll-target="#negate-1">Negate</a></li>
+  </ul></li>
+  <li><a href="#exp" id="toc-exp" class="nav-link" data-scroll-target="#exp">Exp</a>
+  <ul class="collapse">
+  <li><a href="#exp-1" id="toc-exp-1" class="nav-link" data-scroll-target="#exp-1">exp</a></li>
+  <li><a href="#exp-2" id="toc-exp-2" class="nav-link" data-scroll-target="#exp-2">Exp</a></li>
+  </ul></li>
+  <li><a href="#relu" id="toc-relu" class="nav-link" data-scroll-target="#relu">ReLU</a>
+  <ul class="collapse">
+  <li><a href="#relu-1" id="toc-relu-1" class="nav-link" data-scroll-target="#relu-1">relu</a></li>
+  <li><a href="#relu-2" id="toc-relu-2" class="nav-link" data-scroll-target="#relu-2">ReLU</a></li>
+  </ul></li>
+  <li><a href="#power-scalar" id="toc-power-scalar" class="nav-link" data-scroll-target="#power-scalar">Power Scalar</a>
+  <ul class="collapse">
+  <li><a href="#power_scalar" id="toc-power_scalar" class="nav-link" data-scroll-target="#power_scalar">power_scalar</a></li>
+  <li><a href="#powerscalar" id="toc-powerscalar" class="nav-link" data-scroll-target="#powerscalar">PowerScalar</a></li>
+  </ul></li>
+  <li><a href="#element-wise-divide" id="toc-element-wise-divide" class="nav-link" data-scroll-target="#element-wise-divide">Element Wise Divide</a>
+  <ul class="collapse">
+  <li><a href="#divide" id="toc-divide" class="nav-link" data-scroll-target="#divide">divide</a></li>
+  <li><a href="#ewisediv" id="toc-ewisediv" class="nav-link" data-scroll-target="#ewisediv">EWiseDiv</a></li>
+  </ul></li>
+  <li><a href="#divide-scalar" id="toc-divide-scalar" class="nav-link" data-scroll-target="#divide-scalar">Divide Scalar</a>
+  <ul class="collapse">
+  <li><a href="#divide_scalar" id="toc-divide_scalar" class="nav-link" data-scroll-target="#divide_scalar">divide_scalar</a></li>
+  <li><a href="#divscalar" id="toc-divscalar" class="nav-link" data-scroll-target="#divscalar">DivScalar</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/m0saan/minima/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -226,7 +250,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div>
   <div class="description">
-    Fill in a module description here
+    The <code>operators</code> module in this framework provides a collection of tensor operations for building computational graphs in deep learning. Each class in this module represents a different type of operation that can be performed on tensors, such as element-wise addition, scalar multiplication, division, exponentiation, etc.
   </div>
 </div>
 
@@ -289,13 +313,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Performs element-wise addition of two tensors.</p>
 <p>Example: &gt;&gt;&gt; a = Tensor([1, 2, 3]) &gt;&gt;&gt; b = Tensor([4, 5, 6]) &gt;&gt;&gt; op = EWiseAdd() &gt;&gt;&gt; result = op.compute(a, b) &gt;&gt;&gt; print(result) Tensor([5, 7, 9])</p>
-<div class="cell" data-tags="[]" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create two 1-D tensors</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> Tensor([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> Tensor([<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>])</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an EWiseAdd operation</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>op <span class="op">=</span> EWiseAdd()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Create two 1-D tensors</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> Tensor([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> Tensor([<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Create an EWiseAdd operation instance</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>op <span class="op">=</span> EWiseAdd()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Compute the element-wise sum of a and b</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> op.compute(a, b)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result) <span class="co"># Output: Tensor([5, 7, 9])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[5 7 9]</code></pre>
+</div>
+</div>
+<p>Alternatively, you can use the add function directly</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> add(a, b)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>minima.Tensor([5 7 9])</code></pre>
+</div>
+</div>
+<p>or</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>op(a,b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>minima.Tensor([5 7 9])</code></pre>
+</div>
+</div>
+<p>For 2-D tensors, we can compute the element-wise sum of a and b in the same way</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> Tensor([[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]])</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> Tensor([[<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>], [<span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>]])</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> op.compute(a, b)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>minima.Tensor([[ 8 10 12]
+ [14 16 18]])</code></pre>
+</div>
 </div>
 </section>
 </section>
@@ -420,63 +480,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 &amp;= -1
 \end{align*}\]</span></p>
 <p>Therefore, the gradient of <span class="math inline">\(f(a)\)</span> with respect to <span class="math inline">\(a\)</span> is <span class="math inline">\(-1\)</span>.</p>
-<div class="cell" data-tags="[]" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Negate(TensorOp):</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Negates the given tensor.</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; a = Tensor([1, -2, 3])</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; op = Negate()</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; result = op.compute(a)</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; print(result)</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Tensor([-1, 2, -3])</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compute(<span class="va">self</span>, a: NDArray) <span class="op">-&gt;</span> NDArray:</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the negation of a tensor.</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">        - a: The tensor to negate.</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">        The negation of a.</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">-</span><span class="dv">1</span> <span class="op">*</span> a</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> gradient(<span class="va">self</span>, out_grad: Tensor, node: Tensor) <span class="op">-&gt;</span> Tuple[Tensor,]:</span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the gradient of the negation operation.</span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co">        - out_grad: The gradient of the output of the operation.</span></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co">        - node: The node in the computational graph where the operation was performed.</span></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="co">        The gradients with respect to the inputs.</span></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (negate(out_grad), )</span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> negate(a: Tensor) <span class="op">-&gt;</span> Tensor:</span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="co">    Negates the given tensor.</span></span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="co">    - a: The tensor to negate.</span></span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="co">    The negation of a.</span></span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; a = Tensor([1, -2, 3])</span></span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; result = negate(a)</span></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; print(result)</span></span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a><span class="co">    Tensor([-1, 2, -3])</span></span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Negate()(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<hr>
+<section id="negate" class="level3">
+<h3 class="anchored" data-anchor-id="negate">negate</h3>
+<blockquote class="blockquote">
+<pre><code> negate (a:minima.autograd.Tensor)</code></pre>
+</blockquote>
+<p>Negates the given tensor.</p>
+<p>Args: - a: The tensor to negate.</p>
+<p>Returns: The negation of a.</p>
+<p>Example: &gt;&gt;&gt; a = Tensor([1, -2, 3]) &gt;&gt;&gt; result = negate(a) &gt;&gt;&gt; print(result) Tensor([-1, 2, -3])</p>
+<hr>
+</section>
+<section id="negate-1" class="level3">
+<h3 class="anchored" data-anchor-id="negate-1">Negate</h3>
+<blockquote class="blockquote">
+<pre><code> Negate ()</code></pre>
+</blockquote>
+<p>Negates the given tensor.</p>
+<p>Example: &gt;&gt;&gt; a = Tensor([1, -2, 3]) &gt;&gt;&gt; op = Negate() &gt;&gt;&gt; result = op.compute(a) &gt;&gt;&gt; print(result) Tensor([-1, 2, -3])</p>
+</section>
 </section>
 <section id="exp" class="level2">
 <h2 class="anchored" data-anchor-id="exp">Exp</h2>
@@ -490,63 +513,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 &amp;= \exp(a)
 \end{align*}\]</span></p>
 <p>Therefore, the gradient of <span class="math inline">\(f(a)\)</span> with respect to <span class="math inline">\(a\)</span> is <span class="math inline">\(\exp(a)\)</span>.</p>
-<div class="cell" data-tags="[]" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Exp(TensorOp):</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Calculates the exponential of the given tensor.</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; a = Tensor([1, 2, 3])</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; op = Exp()</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; result = op.compute(a)</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; print(result)</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Tensor([2.71828183, 7.3890561, 20.08553692])</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compute(<span class="va">self</span>, a: NDArray) <span class="op">-&gt;</span> NDArray:</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the exponential of a tensor.</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">        - a: The tensor.</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co">        The exponential of a.</span></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.out <span class="op">=</span> array_api.exp(a)</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.out</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> gradient(<span class="va">self</span>, out_grad: Tensor, node: Tensor) <span class="op">-&gt;</span> Tuple[Tensor,]:</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the gradient of the exponential operation.</span></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="co">        - out_grad: The gradient of the output of the operation.</span></span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="co">        - node: The node in the computational graph where the operation was performed.</span></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="co">        The gradients with respect to the inputs.</span></span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (out_grad <span class="op">*</span> <span class="va">self</span>.out, )</span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> exp(a: Tensor) <span class="op">-&gt;</span> Tensor:</span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="co">    Calculates the exponential of the given tensor.</span></span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a><span class="co">    - a: The tensor.</span></span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a><span class="co">    The exponential of a.</span></span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; a = Tensor([1, 2, 3])</span></span>
-<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; result = exp(a)</span></span>
-<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; print(result)</span></span>
-<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a><span class="co">    Tensor([2.71828183, 7.3890561, 20.08553692])</span></span>
-<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Exp()(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<hr>
+<section id="exp-1" class="level3">
+<h3 class="anchored" data-anchor-id="exp-1">exp</h3>
+<blockquote class="blockquote">
+<pre><code> exp (a:minima.autograd.Tensor)</code></pre>
+</blockquote>
+<p>Calculates the exponential of the given tensor.</p>
+<p>Args: - a: The tensor.</p>
+<p>Returns: The exponential of a.</p>
+<p>Example: &gt;&gt;&gt; a = Tensor([1, 2, 3]) &gt;&gt;&gt; result = exp(a) &gt;&gt;&gt; print(result) Tensor([2.71828183, 7.3890561, 20.08553692])</p>
+<hr>
+</section>
+<section id="exp-2" class="level3">
+<h3 class="anchored" data-anchor-id="exp-2">Exp</h3>
+<blockquote class="blockquote">
+<pre><code> Exp ()</code></pre>
+</blockquote>
+<p>Calculates the exponential of the given tensor.</p>
+<p>Example: &gt;&gt;&gt; a = Tensor([1, 2, 3]) &gt;&gt;&gt; op = Exp() &gt;&gt;&gt; result = op.compute(a) &gt;&gt;&gt; print(result) Tensor([2.71828183, 7.3890561, 20.08553692])</p>
+</section>
 </section>
 <section id="relu" class="level2">
 <h2 class="anchored" data-anchor-id="relu">ReLU</h2>
@@ -578,63 +564,26 @@ a, &amp; \text{if } a \geq 0 \\
 \end{cases}
 \]</span></p>
 <p>Therefore, the gradient of <span class="math inline">\(f(a)\)</span> with respect to <span class="math inline">\(a\)</span> is <span class="math inline">\(1\)</span> if <span class="math inline">\(a \geq 0\)</span>, and <span class="math inline">\(0\)</span> if <span class="math inline">\(a &lt; 0\)</span>.</p>
-<div class="cell" data-tags="[]" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ReLU(TensorOp):</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Applies the ReLU (Rectified Linear Unit) activation function to the given tensor.</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; a = Tensor([1, -2, 3])</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; op = ReLU()</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; result = op.compute(a)</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; print(result)</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Tensor([1, 0, 3])</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compute(<span class="va">self</span>, a: NDArray) <span class="op">-&gt;</span> NDArray:</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the ReLU activation function on a tensor.</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">        - a: The tensor.</span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co">        The result of applying ReLU to a.</span></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.out <span class="op">=</span> array_api.clip(a, a_min<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.out</span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> gradient(<span class="va">self</span>, out_grad: Tensor, node: Tensor) <span class="op">-&gt;</span> Tuple[Tensor,]:</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the gradient of the ReLU operation.</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="co">        - out_grad: The gradient of the output of the operation.</span></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="co">        - node: The node in the computational graph where the operation was performed.</span></span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co">        The gradients with respect to the inputs.</span></span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (out_grad <span class="op">*</span> Tensor(node.children[<span class="dv">0</span>] <span class="op">&gt;=</span> <span class="dv">0</span>), )</span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> relu(a: Tensor) <span class="op">-&gt;</span> Tensor:</span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="co">    Applies the ReLU (Rectified Linear Unit) activation function to the given tensor.</span></span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a><span class="co">    - a: The tensor.</span></span>
-<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a><span class="co">    The result of applying ReLU to a.</span></span>
-<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; a = Tensor([1, -2, 3])</span></span>
-<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; result = relu(a)</span></span>
-<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a><span class="co">    &gt;&gt;&gt; print(result)</span></span>
-<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a><span class="co">    Tensor([1, 0, 3])</span></span>
-<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ReLU()(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<hr>
+<section id="relu-1" class="level3">
+<h3 class="anchored" data-anchor-id="relu-1">relu</h3>
+<blockquote class="blockquote">
+<pre><code> relu (a:minima.autograd.Tensor)</code></pre>
+</blockquote>
+<p>Applies the ReLU (Rectified Linear Unit) activation function to the given tensor.</p>
+<p>Args: - a: The tensor.</p>
+<p>Returns: The result of applying ReLU to a.</p>
+<p>Example: &gt;&gt;&gt; a = Tensor([1, -2, 3]) &gt;&gt;&gt; result = relu(a) &gt;&gt;&gt; print(result) Tensor([1, 0, 3])</p>
+<hr>
+</section>
+<section id="relu-2" class="level3">
+<h3 class="anchored" data-anchor-id="relu-2">ReLU</h3>
+<blockquote class="blockquote">
+<pre><code> ReLU ()</code></pre>
+</blockquote>
+<p>Applies the ReLU (Rectified Linear Unit) activation function to the given tensor.</p>
+<p>Example: &gt;&gt;&gt; a = Tensor([1, -2, 3]) &gt;&gt;&gt; op = ReLU() &gt;&gt;&gt; result = op.compute(a) &gt;&gt;&gt; print(result) Tensor([1, 0, 3])</p>
+</section>
 </section>
 <section id="power-scalar" class="level2">
 <h2 class="anchored" data-anchor-id="power-scalar">Power Scalar</h2>
@@ -648,80 +597,27 @@ a, &amp; \text{if } a \geq 0 \\
 &amp;= n \cdot a^{n-1}
 \end{align*}\]</span></p>
 <p>Therefore, the gradient of <span class="math inline">\(f(a)\)</span> with respect to <span class="math inline">\(a\)</span> is <span class="math inline">\(n \cdot a^{n-1}\)</span>.</p>
-<div class="cell" data-tags="[]" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PowerScalar(TensorOp):</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">    The PowerScalar operation raises a tensor to an (integer) power.</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Attributes:</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">        scalar (int): The power to raise the tensor to.</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; import numpy as np</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; tensor = Tensor(np.array([1, 2, 3]))</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; pow_scalar = PowerScalar(2)</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; result = pow_scalar.compute(tensor.data)</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; print(result)</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">        array([1, 4, 9])</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, scalar: <span class="bu">int</span>):</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co">        Constructs the PowerScalar operation.</span></span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co">            scalar (int): The power to raise the tensor to.</span></span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scalar <span class="op">=</span> scalar</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compute(<span class="va">self</span>, a: NDArray) <span class="op">-&gt;</span> NDArray:</span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the power operation on the input tensor.</span></span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="co">            a (NDArray): The input tensor.</span></span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="co">            NDArray: The resulting tensor after the power operation.</span></span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> array_api.power(a, <span class="va">self</span>.scalar)</span>
-<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> gradient(<span class="va">self</span>, out_grad: Tensor, node: Tensor) <span class="op">-&gt;</span> Tuple[Tensor, ]:</span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the gradient of the power operation.</span></span>
-<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a><span class="co">            out_grad (Tensor): The gradient of the output tensor.</span></span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="co">            node (Tensor): The node in the computational graph where the operation was performed.</span></span>
-<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a><span class="co">            Tuple[Tensor, ]: The gradient with respect to the input tensor.</span></span>
-<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> node.children[<span class="dv">0</span>]</span>
-<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (<span class="va">self</span>.scalar <span class="op">*</span> power_scalar(a, <span class="va">self</span>.scalar <span class="op">-</span> <span class="dv">1</span>) <span class="op">*</span> out_grad, )</span>
-<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> power_scalar(a: Tensor, scalar: <span class="bu">int</span>) <span class="op">-&gt;</span> Tensor:</span>
-<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a><span class="co">    Raises a tensor to a power.</span></span>
-<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a><span class="co">        a (Tensor): The input tensor.</span></span>
-<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a><span class="co">        scalar (int): The power to raise the tensor to.</span></span>
-<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a><span class="co">        Tensor: The resulting tensor after the power operation.</span></span>
-<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; import numpy as np</span></span>
-<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; tensor = Tensor(np.array([1, 2, 3]))</span></span>
-<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; result = power_scalar(tensor, 2)</span></span>
-<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; print(result)</span></span>
-<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a><span class="co">        Tensor([1, 4, 9])</span></span>
-<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> PowerScalar(scalar)(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<hr>
+<section id="power_scalar" class="level3">
+<h3 class="anchored" data-anchor-id="power_scalar">power_scalar</h3>
+<blockquote class="blockquote">
+<pre><code> power_scalar (a:minima.autograd.Tensor, scalar:int)</code></pre>
+</blockquote>
+<p>Raises a tensor to a power.</p>
+<p>Args: a (Tensor): The input tensor. scalar (int): The power to raise the tensor to.</p>
+<p>Returns: Tensor: The resulting tensor after the power operation.</p>
+<p>Example: &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; tensor = Tensor(np.array([1, 2, 3])) &gt;&gt;&gt; result = power_scalar(tensor, 2) &gt;&gt;&gt; print(result) Tensor([1, 4, 9])</p>
+<hr>
+</section>
+<section id="powerscalar" class="level3">
+<h3 class="anchored" data-anchor-id="powerscalar">PowerScalar</h3>
+<blockquote class="blockquote">
+<pre><code> PowerScalar (scalar:int)</code></pre>
+</blockquote>
+<p>The PowerScalar operation raises a tensor to an (integer) power.</p>
+<p>Attributes: scalar (int): The power to raise the tensor to.</p>
+<p>Example: &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; tensor = Tensor(np.array([1, 2, 3])) &gt;&gt;&gt; pow_scalar = PowerScalar(2) &gt;&gt;&gt; result = pow_scalar.compute(tensor.data) &gt;&gt;&gt; print(result) array([1, 4, 9])</p>
+</section>
 </section>
 <section id="element-wise-divide" class="level2">
 <h2 class="anchored" data-anchor-id="element-wise-divide">Element Wise Divide</h2>
@@ -752,71 +648,26 @@ a, &amp; \text{if } a \geq 0 \\
 <p><span class="math display">\[\frac{dy}{db} = \frac{b \cdot 0 - a \cdot 1}{b^2}\]</span></p>
 <p>Therefore, the derivative of <span class="math inline">\(y\)</span> with respect to <span class="math inline">\(b\)</span> is <span class="math inline">\(-\frac{a}{b^2}\)</span>.</p>
 <p>Therefore, the gradient of <span class="math inline">\(f(a, b)\)</span> with respect to <span class="math inline">\(a\)</span> is <span class="math inline">\(\frac{1}{b}\)</span>, and the gradient of <span class="math inline">\(f(a, b)\)</span> with respect to <span class="math inline">\(b\)</span> is <span class="math inline">\(- \frac{a}{b^{2}}\)</span>.</p>
-<div class="cell" data-tags="[]" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> EWiseDiv(TensorOp):</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">    The EWiseDiv operation divides two tensors element-wise.</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; import numpy as np</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; a = Tensor(np.array([1, 2, 3]))</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; b = Tensor(np.array([4, 5, 6]))</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; div = EWiseDiv()</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; result = div.compute(a.data, b.data)</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; print(result)</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">        array([0.25, 0.4, 0.5])</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compute(<span class="va">self</span>, a: NDArray, b: NDArray) <span class="op">-&gt;</span> NDArray:</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the element-wise division of two tensors.</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">            a (NDArray): The dividend tensor.</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">            b (NDArray): The divisor tensor.</span></span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">            NDArray: The resulting tensor after element-wise division.</span></span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> a <span class="op">/</span> b</span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> gradient(<span class="va">self</span>, out_grad: Tensor, node: Tensor) <span class="op">-&gt;</span> Tuple[Tensor, Tensor]:</span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the gradient of the element-wise division operation.</span></span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="co">            out_grad (Tensor): The gradient of the output tensor.</span></span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="co">            node (Tensor): The node in the computational graph where the operation was performed.</span></span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a><span class="co">            Tuple[Tensor, Tensor]: The gradients with respect to the dividend and divisor tensors.</span></span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>        a, b <span class="op">=</span> node.inputs</span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> divide(out_grad, b), out_grad <span class="op">*</span> negate(divide(a, power_scalar(b, <span class="dv">2</span>)))</span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> divide(a: Tensor, b: Tensor) <span class="op">-&gt;</span> Tensor:</span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a><span class="co">    Divides two tensors element-wise.</span></span>
-<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a><span class="co">        a (Tensor): The dividend tensor.</span></span>
-<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a><span class="co">        b (Tensor): The divisor tensor.</span></span>
-<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a><span class="co">        Tensor: The resulting tensor after element-wise division.</span></span>
-<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; import numpy as np</span></span>
-<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; a = Tensor(np.array([1, 2, 3]))</span></span>
-<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; b = Tensor(np.array([4, 5, 6]))</span></span>
-<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; result = divide(a, b)</span></span>
-<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; print(result)</span></span>
-<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a><span class="co">        Tensor([0.25, 0.4, 0.5])</span></span>
-<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> EWiseDiv()(a, b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<hr>
+<section id="divide" class="level3">
+<h3 class="anchored" data-anchor-id="divide">divide</h3>
+<blockquote class="blockquote">
+<pre><code> divide (a:minima.autograd.Tensor, b:minima.autograd.Tensor)</code></pre>
+</blockquote>
+<p>Divides two tensors element-wise.</p>
+<p>Args: a (Tensor): The dividend tensor. b (Tensor): The divisor tensor.</p>
+<p>Returns: Tensor: The resulting tensor after element-wise division.</p>
+<p>Example: &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; a = Tensor(np.array([1, 2, 3])) &gt;&gt;&gt; b = Tensor(np.array([4, 5, 6])) &gt;&gt;&gt; result = divide(a, b) &gt;&gt;&gt; print(result) Tensor([0.25, 0.4, 0.5])</p>
+<hr>
+</section>
+<section id="ewisediv" class="level3">
+<h3 class="anchored" data-anchor-id="ewisediv">EWiseDiv</h3>
+<blockquote class="blockquote">
+<pre><code> EWiseDiv ()</code></pre>
+</blockquote>
+<p>The EWiseDiv operation divides two tensors element-wise.</p>
+<p>Example: &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; a = Tensor(np.array([1, 2, 3])) &gt;&gt;&gt; b = Tensor(np.array([4, 5, 6])) &gt;&gt;&gt; div = EWiseDiv() &gt;&gt;&gt; result = div.compute(a.data, b.data) &gt;&gt;&gt; print(result) array([0.25, 0.4, 0.5])</p>
+</section>
 </section>
 <section id="divide-scalar" class="level2">
 <h2 class="anchored" data-anchor-id="divide-scalar">Divide Scalar</h2>
@@ -833,82 +684,31 @@ a, &amp; \text{if } a \geq 0 \\
 &amp;= \frac{1}{c}
 \end{align*}\]</span></p>
 <p>Therefore, the gradient of <span class="math inline">\(f(a)\)</span> with respect to <span class="math inline">\(a\)</span> is <span class="math inline">\(\frac{1}{c}\)</span>.</p>
-<div class="cell" data-tags="[]" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DivScalar(TensorOp):</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">    The DivScalar operation divides a tensor by a scalar.</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; import numpy as np</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; a = Tensor(np.array([1, 2, 3]))</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; scalar = 2</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; div_scalar = DivScalar(scalar)</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; result = div_scalar.compute(a.data)</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; print(result)</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">        array([0.5, 1.0, 1.5])</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, scalar: Union[<span class="bu">int</span>, <span class="bu">float</span>]):</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="co">        Initialize the DivScalar operation with the scalar to divide by.</span></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co">            scalar (int, float): The scalar to divide the tensor by.</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scalar <span class="op">=</span> scalar</span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compute(<span class="va">self</span>, a: NDArray) <span class="op">-&gt;</span> NDArray:</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="co">        Divides the tensor by the scalar.</span></span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="co">            a (NDArray): The tensor to divide.</span></span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="co">            NDArray: The resulting tensor after division.</span></span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> a <span class="op">/</span> <span class="va">self</span>.scalar</span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> gradient(<span class="va">self</span>, out_grad: Tensor, node: Tensor) <span class="op">-&gt;</span> Tuple[Tensor, ...]:</span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a><span class="co">        Computes the gradient of the division operation.</span></span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a><span class="co">            out_grad (Tensor): The gradient of the output tensor.</span></span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a><span class="co">            node (Tensor): The node in the computational graph where the operation was performed.</span></span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a><span class="co">            Tuple[Tensor, ...]: The gradient with respect to the tensor.</span></span>
-<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (out_grad <span class="op">/</span> <span class="va">self</span>.scalar, )</span>
-<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> divide_scalar(a: Tensor, scalar: Union[<span class="bu">int</span>, <span class="bu">float</span>]) <span class="op">-&gt;</span> Tensor:</span>
-<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a><span class="co">    Divides a tensor by a scalar.</span></span>
-<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a><span class="co">        a (Tensor): The tensor to divide.</span></span>
-<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a><span class="co">        scalar (int, float): The scalar to divide the tensor by.</span></span>
-<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a><span class="co">        Tensor: The resulting tensor after division.</span></span>
-<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; import numpy as np</span></span>
-<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; a = Tensor(np.array([1, 2, 3]))</span></span>
-<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; scalar = 2</span></span>
-<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; result = divide_scalar(a, scalar)</span></span>
-<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; print(result)</span></span>
-<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a><span class="co">        Tensor([0.5, 1.0, 1.5])</span></span>
-<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> DivScalar(scalar)(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nbdev<span class="op">;</span> nbdev.nbdev_export()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+<section id="divide_scalar" class="level3">
+<h3 class="anchored" data-anchor-id="divide_scalar">divide_scalar</h3>
+<blockquote class="blockquote">
+<pre><code> divide_scalar (a:minima.autograd.Tensor, scalar:Union[int,float])</code></pre>
+</blockquote>
+<p>Divides a tensor by a scalar.</p>
+<p>Args: a (Tensor): The tensor to divide. scalar (int, float): The scalar to divide the tensor by.</p>
+<p>Returns: Tensor: The resulting tensor after division.</p>
+<p>Example: &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; a = Tensor(np.array([1, 2, 3])) &gt;&gt;&gt; scalar = 2 &gt;&gt;&gt; result = divide_scalar(a, scalar) &gt;&gt;&gt; print(result) Tensor([0.5, 1.0, 1.5])</p>
+<hr>
+</section>
+<section id="divscalar" class="level3">
+<h3 class="anchored" data-anchor-id="divscalar">DivScalar</h3>
+<blockquote class="blockquote">
+<pre><code> DivScalar (scalar:Union[int,float])</code></pre>
+</blockquote>
+<p>The DivScalar operation divides a tensor by a scalar.</p>
+<p>Example: &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; a = Tensor(np.array([1, 2, 3])) &gt;&gt;&gt; scalar = 2 &gt;&gt;&gt; div_scalar = DivScalar(scalar) &gt;&gt;&gt; result = div_scalar.compute(a.data) &gt;&gt;&gt; print(result) array([0.5, 1.0, 1.5])</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nbdev<span class="op">;</span> nbdev.nbdev_export()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

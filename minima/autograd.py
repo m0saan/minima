@@ -42,15 +42,21 @@ class Value:
 
     def __add__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data + other.data, (self, other), '+')
+        out = Value(self._data + other._data, (self, other), '+')
         return out
 
     def __mul__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data * other.data, (self, other), '*')
+        out = Value(self._data * other._data, (self, other), '*')
         return out
 
-
+    @property
+    def data(self):
+        return self._data
+    
+    @data.setter
+    def data(self, data):
+        self._data = data
 
 # %% ../nbs/00_autograd.ipynb 47
 class Value:
@@ -77,7 +83,7 @@ class Value:
     
     def __add__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data + other.data, (self, other), '+')
+        out = Value(self._data + other._data, (self, other), '+')
 
         def _backward():
             self.grad += out.grad
@@ -88,10 +94,10 @@ class Value:
 
     def __mul__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data * other.data, (self, other), '*')
+        out = Value(self._data * other._data, (self, other), '*')
 
         def _backward():
-            self.grad += other.data * out.grad
+            self.grad += other._data * out.grad
             other.grad += self._data * out.grad
         out._backward = _backward
 
@@ -125,7 +131,7 @@ class Value:
     
     def __add__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data + other.data, (self, other), '+')
+        out = Value(self._data + other._data, (self, other), '+')
 
         def _backward():
             self.grad += out.grad
@@ -136,10 +142,10 @@ class Value:
 
     def __mul__(self, other):
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data * other.data, (self, other), '*')
+        out = Value(self._data * other._data, (self, other), '*')
 
         def _backward():
-            self.grad += other.data * out.grad
+            self.grad += other._data * out.grad
             other.grad += self._data * out.grad
         out._backward = _backward
 
@@ -234,7 +240,7 @@ class Value:
         
         other = Value(other) if not isinstance(other, Value) else other
         
-        out  = Value(self._data + other.data, children=(self, other), op='+')
+        out  = Value(self._data + other._data, children=(self, other), op='+')
         
         def _backward():
             self.grad += 1 * out.grad
@@ -291,10 +297,10 @@ class Value:
         """
         
         other = Value(other) if not isinstance(other, Value) else other
-        out =  Value(self._data * other.data, children=(self, other), op='*')
+        out =  Value(self._data * other._data, children=(self, other), op='*')
         
         def _backward():
-            self.grad += other.data * out.grad
+            self.grad += other._data * out.grad
             other.grad += self._data * out.grad
             
         out._backward = _backward

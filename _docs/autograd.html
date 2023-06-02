@@ -340,7 +340,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>This ability to build out mathematical expressions using only addition and multiplication allows for the construction of a broad variety of functions. For example, given multiple inputs (a, b, c, f), we can formulate a mathematical expression that generates a single output (l). After the forward pass, the output value is calculated and can be visualized, as demonstrated in the example where the forward pass output is -8.</p>
 <p>In summary, the Value class is a fundamental building block for creating and navigating a computational graph in the context of automatic differentiation, making it an invaluable tool in any deep learning framework.</p>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L171" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L170" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="value" class="level3">
 <h3 class="anchored" data-anchor-id="value">Value</h3>
 <blockquote class="blockquote">
@@ -526,7 +526,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L171" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L170" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 </section>
 <section id="value-1" class="level3">
@@ -616,7 +616,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>So let’s now update the Value class with this logic</p>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L171" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L170" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="value-2" class="level3">
 <h3 class="anchored" data-anchor-id="value-2">Value</h3>
@@ -644,7 +644,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>draw_dot(L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L171" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L170" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="value-3" class="level3">
 <h3 class="anchored" data-anchor-id="value-3">Value</h3>
@@ -655,7 +655,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Attributes: - data (float): the scalar value associated with this node - grad (float): the gradient of the output of the computational graph w.r.t. this node’s value - label (str): a label for this node, used for debugging and visualization purposes - _op (str): a string representation of the operation that produced this node in the computational graph - _prev (set of Value objects): the set of nodes that contributed to the computation of this node - _backward (function): a function that computes the gradients of this node w.r.t. its inputs</p>
 <p>Methods: - <strong>init</strong>(self, data, children=(), op=’‘, label=’’): Initializes a Value object with the given data, children, op, and label - <strong>repr</strong>(self): Returns a string representation of this Value object - <strong>add</strong>(self, other): Implements the addition operation between two Value objects - <strong>mul</strong>(self, other): Implements the multiplication operation between two Value objects - item(self): Returns the scalar value associated with this Value object - tanh(self): Applies the hyperbolic tangent function to this Value object and returns a new Value object</p>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L485" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L484" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="all_devices" class="level3">
 <h3 class="anchored" data-anchor-id="all_devices">all_devices</h3>
@@ -664,7 +664,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>return a list of all available devices</p>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L481" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L480" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="cpu" class="level3">
 <h3 class="anchored" data-anchor-id="cpu">cpu</h3>
@@ -673,7 +673,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Return cpu device</p>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L466" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L465" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="cpudevice" class="level3">
 <h3 class="anchored" data-anchor-id="cpudevice">CPUDevice</h3>
@@ -682,7 +682,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Represents data that sits in CPU</p>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L462" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L461" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="device" class="level3">
 <h3 class="anchored" data-anchor-id="device">Device</h3>
@@ -691,7 +691,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Indicates the device supporting an NDArray.</p>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L490" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L489" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="operator" class="level3">
 <h3 class="anchored" data-anchor-id="operator">Operator</h3>
@@ -700,7 +700,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Initialize self. See help(type(self)) for accurate signature.</p>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L502" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L501" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="tensorop" class="level3">
 <h3 class="anchored" data-anchor-id="tensorop">TensorOp</h3>
@@ -734,7 +734,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.cached_data <span class="op">=</span> cached_data</span>
 <span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.requires_grad <span class="op">=</span> requires_grad</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
-<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L509" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/autograd.py#L508" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="tensor" class="level3">
 <h3 class="anchored" data-anchor-id="tensor">Tensor</h3>

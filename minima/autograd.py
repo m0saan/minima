@@ -16,7 +16,6 @@ from typing import (
 import numpy
 import numpy as ARRAY_API
 import minima as mi
-import torch
 from graphviz import Digraph
 
 # %% ../nbs/00_autograd.ipynb 20

@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://m0saan.github.io/minima/core.html</loc>
-    <lastmod>2023-06-02T03:40:00.224Z</lastmod>
-  </url>
-  <url>
-    <loc>https://m0saan.github.io/minima/Untitled.html</loc>
-    <lastmod>2023-06-02T03:40:01.908Z</lastmod>
-  </url>
-  <url>
     <loc>https://m0saan.github.io/minima/operators.html</loc>
-    <lastmod>2023-06-02T03:40:02.920Z</lastmod>
+    <lastmod>2023-06-02T03:45:18.395Z</lastmod>
   </url>
   <url>
     <loc>https://m0saan.github.io/minima/autograd.html</loc>
-    <lastmod>2023-06-02T03:40:04.076Z</lastmod>
+    <lastmod>2023-06-02T03:45:21.635Z</lastmod>
   </url>
   <url>
     <loc>https://m0saan.github.io/minima/index.html</loc>
-    <lastmod>2023-06-02T03:40:04.645Z</lastmod>
+    <lastmod>2023-06-02T03:45:22.573Z</lastmod>
   </url>
 </urlset>

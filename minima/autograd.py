@@ -834,8 +834,56 @@ class Tensor(Value):
         return data.device
     
     def backward(self, out_grad: Optional['Tensor']=None) -> None:
-        out_grad = out_grad if not out_grad else Tensor(ARRAY_API.ones(self.shape))
-        self._backward(self, out_grad)
+        """
+        computes the backward gradient for a given tensor.
+
+        Args:
+            output_grad: A tensor that stores the gradients for back propagation.
+                Default value is None, which initializes the tensor with ones.
+        """
+        self.grad = out_grad if out_grad is not None else Tensor(ARRAY_API.ones(self.shape))
+        
+        node_to_output_grads_list: Dict[Tensor, Tensor] = {}
+        node_to_output_grads_list[self] = self.grad
+
+        def _topological_sort(self) -> List['Tensor']:
+            """
+            Given a node in a computational graph, this function returns a list of all nodes in the graph sorted 
+            in topological order.
+
+            Args:
+                self: A node in a computational graph.
+
+            Returns:
+                A list of all nodes in the graph sorted in topological order.
+            """
+            
+            
+            visited = set()
+            reverse_topo_order = []
+
+            def build_topo(node):
+                visited.add(node)
+                for child in node.children:
+                    if child not in visited:
+                        build_topo(child)
+                reverse_topo_order.append(node)
+
+            build_topo(self)
+            reverse_topo_order.reverse()
+            return reverse_topo_order    
+
+        for node in self._topological_sort():
+            node.grad = node_to_output_grads_list[node]
+            # compute grad of current node w.r.t. output node
+            # propagate grad to inputs
+            if not node.is_leaf():
+                for in_node, grad in zip(node.children, node.op.gradient(node.grad, node)):
+                    if in_node not in node_to_output_grads_list:
+                        node_to_output_grads_list[in_node] = grad
+                    else:
+                        node_to_output_grads_list[in_node] += grad
+
     
     def __add__(self, other: Union['Tensor', int, float]) -> 'Tensor':
         """
@@ -975,6 +1023,27 @@ class Tensor(Value):
         - If the method is called as `self.__matmul__(other)`, this corresponds to `self @ other` in usual operations.
         """
         return mi.ops.MatMul()(self, other)
+    
+    
+    def matmul(self, other):
+        return mi.operators.MatMul()(self, other)
 
-    def _backward(self, out_grad: 'Tensor') -> None:
-        pass
+    def sum(self, axes=None):
+        return mi.operators.Summation(axes)(self)
+
+    def broadcast_to(self, shape):
+        return mi.operators.BroadcastTo(shape)(self)
+
+    def reshape(self, shape):
+        return mi.operators.Reshape(shape)(self)
+
+    def __neg__(self):
+        return mi.operators.Negate()(self)
+
+    def transpose(self, axes=None):
+        return mi.operators.Transpose(axes)(self)
+
+    __radd__ = __add__
+    __rmul__ = __mul__
+    __rsub__ = __sub__
+    __rmatmul__ = __matmul__

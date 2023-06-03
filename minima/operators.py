@@ -15,6 +15,7 @@ from .autograd import Operator, Tensor, Value, TensorOp, Tuple, Union
 from collections import namedtuple
 from typing import NamedTuple
 import numpy
+import torch
 
 # NOTE: we will import numpy as the array_api
 # as the backend for our computations, this line will change in later homeworks

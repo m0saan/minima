@@ -16,7 +16,7 @@ from typing import (
 import numpy
 import numpy as ARRAY_API
 import minima as mi
-from graphviz import Digraph
+# from graphviz import Digraph
 
 # %% ../nbs/00_autograd.ipynb 20
 class Value:

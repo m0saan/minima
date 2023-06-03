@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['EWiseAdd', 'add', 'AddScalar', 'add_scalar', 'EWiseMul', 'multiply', 'MulScalar', 'mul_scalar', 'EWiseDiv', 'divide',
            'DivScalar', 'divide_scalar', 'Negate', 'negate', 'Exp', 'exp', 'ReLU', 'relu', 'PowerScalar',
-           'power_scalar', 'Transpose', 'transpose', 'Reshape', 'reshape']
+           'power_scalar', 'Transpose', 'transpose', 'Reshape', 'reshape', 'MatMul', 'matmul', 'Summation', 'summation']
 
 # %% ../nbs/01_operators.ipynb 2
 """Operator implementations."""
@@ -775,4 +775,173 @@ def reshape(a: Tensor, shape: Tuple[int, ...]) -> Tensor:
                  [4, 5, 6]])
     """
     return Reshape(shape)(a)
+
+
+# %% ../nbs/01_operators.ipynb 67
+class MatMul(TensorOp):
+    """
+    Tensor operation class that performs matrix multiplication.
+
+    Example:
+        >>> a = Tensor([[1, 2], [3, 4]])
+        >>> b = Tensor([[5, 6], [7, 8]])
+        >>> op = MatMul()
+        >>> result = op.compute(a, b)
+        >>> print(result)
+        Tensor([[19, 22],
+                 [43, 50]])
+    """
+    
+    
+    def compute(self, a: NDArray, b: NDArray) -> NDArray:
+        """
+        Perform the matrix multiplication operation.
+
+        Args:
+            a (NDArray): The first input tensor.
+            b (NDArray): The second input tensor.
+
+        Returns:
+            NDArray: The product of a and b.
+        """
+        return array_api.matmul(a, b)
+
+    
+    def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor, Tensor]:
+        """
+        Compute the gradient of the matrix multiplication operation.
+
+        Args:
+            out_grad (Tensor): The gradient of the output tensor.
+            node (Tensor): The node in the computational graph where the operation was performed.
+
+        Returns:
+            Tuple[Tensor, Tensor]: The gradients with respect to the input tensors.
+        """
+        a, b = node.children
+        out_shape, a_shape, b_shape = out_grad.shape, a.shape, b.shape
+        
+        # Compute the gradient with respect to a
+        if len(a_shape) == len(out_shape):
+            # If a and the output have the same dimensionality, we perform a matrix multiplication
+            # between the output gradient and the transpose of b
+            grad_wrt_a = matmul(out_grad, transpose(b))
+        else:
+            # If a has fewer dimensions than the output, we sum over the extra dimensions in the output
+            axes_to_sum_over = tuple(range(len(out_shape) - len(a_shape)))
+            grad_wrt_a = summation(matmul(out_grad, transpose(b)), axes=axes_to_sum_over)
+
+        # Compute the gradient with respect to b
+        if len(b_shape) == len(out_shape):
+            # If b and the output have the same dimensionality, we perform a matrix multiplication
+            # between the transpose of a and the output gradient
+            grad_wrt_b = matmul(transpose(a), out_grad)
+        else:
+            # If b has fewer dimensions than the output, we sum over the extra dimensions in the output
+            axes_to_sum_over = tuple(range(len(out_shape) - len(b_shape)))
+            grad_wrt_b = summation(matmul(transpose(a), out_grad), axes=axes_to_sum_over)
+
+        return grad_wrt_a, grad_wrt_b
+
+
+def matmul(a: Tensor, b: Tensor) -> Tensor:
+    """
+    Perform matrix multiplication on two tensors.
+
+    Args:
+        a (Tensor): The first input tensor.
+        b (Tensor): The second input tensor.
+
+    Returns:
+        Tensor: The product of a and b.
+
+    Example:
+        >>> a = Tensor([[1, 2], [3, 4]])
+        >>> b = Tensor([[5, 6], [7, 8]])
+        >>> result = matmul(a, b)
+        >>> print(result)
+        Tensor([[19, 22],
+                 [43, 50]])
+    """
+    return MatMul()(a, b)
+
+
+# %% ../nbs/01_operators.ipynb 76
+class Summation(TensorOp):
+    """
+    Op to compute the sum of a tensor along specified axes.
+
+    Example:
+    >>> a = Tensor([[1, 2, 3], [4, 5, 6]])
+    >>> op = Summation(axes=(0,))
+    >>> result = op.compute(a)
+    >>> print(result)
+    Tensor([5, 7, 9])
+
+    Args:
+    - axes (tuple, optional): The dimensions to reduce. If `None` (default), reduces all dimensions.
+
+    Methods:
+    - compute(a: NDArray) -> NDArray: Computes the sum of `a` along the specified axes.
+    - gradient(out_grad: Tensor, node: Tensor) -> Tuple[Tensor]: Computes the gradient of the sum operation.
+    """
+    def __init__(self, axes: Optional[tuple] = None):
+        self.axes = axes
+
+    def compute(self, a: NDArray) -> NDArray:
+        """
+        Computes the sum of `a` along the specified axes.
+
+        Args:
+        - a: The input tensor.
+
+        Returns:
+        The sum of `a` along the specified axes.
+        """
+        return array_api.sum(a, self.axes)
+
+    def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor]:
+        """
+        Computes the gradient of the sum operation.
+
+        Args:
+        - out_grad: The gradient of the output of the operation.
+        - node: The node in the computational graph where the operation was performed.
+
+        Returns:
+        The gradient with respect to the input.
+        """
+        # out_grad is the gradient of the output of this operation
+        # We need to "undo" the dimensionality reduction performed in the forward pass
+        # That's why we create a new shape, replacing the dimensions specified by self.axes with 1
+
+        # Initialize new shape to be the same as the input shape
+        new_shape = list(node.inputs[0].shape)
+
+        # If axes were specified, set those dimensions to 1 in the new shape
+        if self.axes:
+            for axis in self.axes: new_shape[axis] = 1
+
+        # Reshape out_grad to the new shape
+        reshaped_grad = reshape(out_grad, new_shape)
+
+        # Broadcast the reshaped out_grad to match the input shape
+        broadcasted_grad = broadcast_to(reshaped_grad, node.inputs[0].shape)
+
+        # The gradient method needs to return a tuple, even though there's only one input
+        return (broadcasted_grad,)
+
+
+def summation(a: Tensor, axes: Optional[tuple] = None) -> Tensor:
+    """
+    Computes the sum of `a` along the specified axes.
+
+    Args:
+    - a: The input tensor.
+    - axes (tuple, optional): The dimensions to reduce. If `None` (default), reduces all dimensions.
+
+    Returns:
+    The sum of `a` along the specified axes.
+    """
+    return Summation(axes)(a)
 

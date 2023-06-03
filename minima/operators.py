@@ -3,7 +3,8 @@
 # %% auto 0
 __all__ = ['EWiseAdd', 'add', 'AddScalar', 'add_scalar', 'EWiseMul', 'multiply', 'MulScalar', 'mul_scalar', 'EWiseDiv', 'divide',
            'DivScalar', 'divide_scalar', 'Negate', 'negate', 'Exp', 'exp', 'ReLU', 'relu', 'PowerScalar',
-           'power_scalar', 'Transpose', 'transpose', 'Reshape', 'reshape', 'MatMul', 'matmul', 'Summation', 'summation']
+           'power_scalar', 'Transpose', 'transpose', 'Reshape', 'reshape', 'MatMul', 'matmul', 'Summation', 'summation',
+           'BroadcastTo', 'broadcast_to']
 
 # %% ../nbs/01_operators.ipynb 2
 """Operator implementations."""
@@ -170,7 +171,7 @@ class EWiseMul(TensorOp):
         Returns:
         The gradients with respect to the inputs.
         """
-        a, b = node.inputs
+        a, b = node.children
         return out_grad * b, out_grad * a
 
 def multiply(a: Tensor, b: Tensor) -> Tensor:
@@ -285,7 +286,7 @@ class EWiseDiv(TensorOp):
         Returns:
             Tuple[Tensor, Tensor]: The gradients with respect to the dividend and divisor tensors.
         """
-        a, b = node.inputs
+        a, b = node.children
         return divide(out_grad, b), out_grad * negate(divide(a, power_scalar(b, 2)))
 
 
@@ -462,7 +463,7 @@ class Exp(TensorOp):
         Returns:
         The exponential of a.
         """
-        self.out = array_api.exp(a)
+        self.out = ARRAY_API.exp(a)
         return self.out
 
     def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor,]:
@@ -519,7 +520,7 @@ class ReLU(TensorOp):
         Returns:
         The result of applying ReLU to a.
         """
-        self.out = array_api.clip(a, a_min=0)
+        self.out = ARRAY_API.clip(a, a_min=0)
         return self.out
 
     def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor,]:
@@ -591,7 +592,7 @@ class PowerScalar(TensorOp):
         Returns:
             NDArray: The resulting tensor after the power operation.
         """
-        return array_api.power(a, self.scalar)
+        return ARRAY_API.power(a, self.scalar)
 
     def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor, ]:
         """
@@ -663,9 +664,7 @@ class Transpose(TensorOp):
         Returns:
             NDArray: The transposed tensor.
         """
-        
-        if len(self.axes) == 1:
-            return a
+
         if self.axes:
             a = a.swapaxes(self.axes[0], self.axes[1])
         else:
@@ -740,7 +739,7 @@ class Reshape(TensorOp):
         Returns:
             NDArray: The reshaped tensor.
         """
-        return array_api.reshape(a, newshape=self.shape)
+        return ARRAY_API.reshape(a, newshape=self.shape)
 
     def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor, ...]:
         """
@@ -804,7 +803,7 @@ class MatMul(TensorOp):
         Returns:
             NDArray: The product of a and b.
         """
-        return array_api.matmul(a, b)
+        return ARRAY_API.matmul(a, b)
 
     
     def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor, Tensor]:
@@ -898,7 +897,7 @@ class Summation(TensorOp):
         Returns:
         The sum of `a` along the specified axes.
         """
-        return array_api.sum(a, self.axes)
+        return ARRAY_API.sum(a, self.axes)
 
     def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor]:
         """
@@ -916,7 +915,7 @@ class Summation(TensorOp):
         # That's why we create a new shape, replacing the dimensions specified by self.axes with 1
 
         # Initialize new shape to be the same as the input shape
-        new_shape = list(node.inputs[0].shape)
+        new_shape = list(node.children[0].shape)
 
         # If axes were specified, set those dimensions to 1 in the new shape
         if self.axes:
@@ -926,7 +925,7 @@ class Summation(TensorOp):
         reshaped_grad = reshape(out_grad, new_shape)
 
         # Broadcast the reshaped out_grad to match the input shape
-        broadcasted_grad = broadcast_to(reshaped_grad, node.inputs[0].shape)
+        broadcasted_grad = broadcast_to(reshaped_grad, node.children[0].shape)
 
         # The gradient method needs to return a tuple, even though there's only one input
         return (broadcasted_grad,)
@@ -944,4 +943,75 @@ def summation(a: Tensor, axes: Optional[tuple] = None) -> Tensor:
     The sum of `a` along the specified axes.
     """
     return Summation(axes)(a)
+
+
+# %% ../nbs/01_operators.ipynb 89
+class BroadcastTo(TensorOp):
+    """
+    Op to broadcast a tensor to a new shape.
+
+    Example:
+    >>> a = Tensor([1, 2, 3])
+    >>> op = BroadcastTo((3, 3))
+    >>> result = op.compute(a)
+    >>> print(result)
+    Tensor([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
+
+    Args:
+    - shape (tuple): The new shape to broadcast the input tensor to.
+
+    Methods:
+    - compute(a: NDArray) -> NDArray: Broadcasts `a` to the specified shape.
+    - gradient(out_grad: Tensor, node: Tensor) -> Tuple[Tensor]: Computes the gradient of the broadcast operation.
+    """
+    def __init__(self, shape):
+        self.shape = shape
+
+    def compute(self, a: NDArray) -> NDArray:
+        """
+        Broadcasts `a` to the specified shape.
+
+        Args:
+        - a: The input tensor.
+
+        Returns:
+        The tensor `a` broadcasted to the specified shape.
+        """
+        return ARRAY_API.broadcast_to(a, self.shape)
+
+    def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor]:
+        """
+        Computes the gradient of the broadcast operation.
+
+        Args:
+        - out_grad: The gradient of the output of the operation.
+        - node: The node in the computational graph where the operation was performed.
+
+        Returns:
+        The gradient with respect to the input.
+        """
+        # First, we need to create a shape that matches the shape of `a` but with ones 
+        # prepended to match the length of `self.shape`.
+        a_shape = node.children[0].shape
+        shape = [1] * (len(self.shape) - len(a_shape)) + list(a_shape)
+
+        # Then, we identify the dimensions along which to sum in the backward pass. 
+        # These are the dimensions that were expanded during the broadcast.
+        sum_over = tuple([idx for idx in range(len(self.shape)) if self.shape[idx] != shape[idx]])
+
+        # Finally, we reshape the gradient after summing over the appropriate dimensions to match `a`'s shape.
+        return reshape(summation(out_grad, sum_over), a_shape)
+
+def broadcast_to(a: Tensor, shape: Tuple[int, ...]) -> Tensor:
+    """
+    Broadcasts `a` to the specified shape.
+
+    Args:
+    - a: The input tensor.
+    - shape: The new shape to broadcast the input tensor to.
+
+    Returns:
+    The tensor `a` broadcasted to the specified shape.
+    """
+    return BroadcastTo(shape)(a)
 

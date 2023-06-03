@@ -603,7 +603,7 @@ class Tensor(Value):
         return "minima.Tensor(" + str(self.realize_data()) + ")"
 
     def __str__(self):
-        return self.realize_data().__str__()
+        return self.realize_data().__repr__()
         
     def _init(
         self,

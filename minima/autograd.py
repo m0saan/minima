@@ -36,7 +36,7 @@ class Value:
     def __init__(self, data, _children=(), _op='', label=''):
         self._data = data
         self.grad = 0
-        self._prev = set(_children)
+        self.children = set(_children)
         self._op = _op
         self.label = label
 
@@ -77,7 +77,7 @@ class Value:
         self._data = data
         self.grad = 0
         self._backward = lambda: None
-        self._prev = set(_children)
+        self.children = set(_children)
         self._op = _op
         self.label = label
     
@@ -125,7 +125,7 @@ class Value:
         self._data = data
         self.grad = 0
         self._backward = lambda: None
-        self._prev = set(_children)
+        self.children = set(_children)
         self._op = _op
         self.label = label
     
@@ -162,7 +162,7 @@ class Value:
         def build_topo(v):
             if v not in visited:
                 visited.add(v)
-                for child in v._prev:
+                for child in v.children:
                     build_topo(child)
                 topo.append(v)
         build_topo(self)
@@ -212,7 +212,7 @@ class Value:
         """
         
         self._data = data
-        self._prev = set(children)
+        self.children = set(children)
         self._op = op
         self.grad = 0.0
         self.label = label
@@ -471,7 +471,7 @@ class Value:
 
         def build_topo(node):
             visited.add(node)
-            for child in node._prev:
+            for child in node.children:
                 if child not in visited:
                     build_topo(child)
             topo.append(node)
@@ -556,6 +556,7 @@ class Tensor(Value):
     >>> print(t1.dtype)
     float64
     """
+    
 
     def __init__(
         self,
@@ -636,6 +637,8 @@ class Tensor(Value):
         self.children = children
         self.num_outputs = num_outputs
         self.requires_grad = requires_grad
+        self.label = ''
+        self.grad: 'Tensor'
         
     def realize_data(self):
         """
@@ -728,6 +731,11 @@ class Tensor(Value):
         Tensor([1, 2, 3])
         """
         return self.create_detached_tensor(self.realize_data())
+
+    @property
+    def T(self) -> 'Tensor':
+        print(self.shape)
+        return mi.operators.transpose(self, self.shape)
     
     def numpy(self):
         """
@@ -871,7 +879,7 @@ class Tensor(Value):
             if self.shape != other.shape:
                 raise AssertionError(f"Tensors must be of the same shape for subtraction. Got {self.shape} and {other.shape}.")
 
-            return mi.operators.EWiseAdd()(negate(self), other)
+            return mi.operators.EWiseAdd()(self, mi.operators.negate(other))
 
         elif isinstance(other, (int, float)):
             return mi.operators.AddScalar(scalar=-other)(self)
@@ -970,4 +978,3 @@ class Tensor(Value):
 
     def _backward(self, out_grad: 'Tensor') -> None:
         pass
-

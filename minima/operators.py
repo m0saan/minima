@@ -920,6 +920,9 @@ class Summation(TensorOp):
         # If axes were specified, set those dimensions to 1 in the new shape
         if self.axes:
             for axis in self.axes: new_shape[axis] = 1
+            
+        else:
+            new_shape = [1] * len(new_shape)
 
         # Reshape out_grad to the new shape
         reshaped_grad = reshape(out_grad, new_shape)

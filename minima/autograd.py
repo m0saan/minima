@@ -352,6 +352,21 @@ class CPUDevice(Device):
 
     def enabled(self):
         return True
+    
+    def zeros(self, *shape, dtype="float32"):
+        return numpy.zeros(shape, dtype=dtype)
+
+    def ones(self, *shape, dtype="float32"):
+        return numpy.ones(shape, dtype=dtype)
+
+    def randn(self, *shape):
+        return numpy.random.randn(*shape) 
+
+    def rand(self, *shape):
+        return numpy.random.rand(*shape)
+
+    def one_hot(self, n, i, dtype="float32"):
+        return numpy.eye(n, dtype=dtype)[i]
 
 def cpu():
     """Return cpu device"""

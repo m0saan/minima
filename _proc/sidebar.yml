@@ -1,8 +1,0 @@
-website:
-  sidebar:
-    contents:
-      - index.ipynb
-      - 00_autograd.ipynb
-      - 01_operators.ipynb
-      - 02_init.ipynb
-      - 03_nn.ipynb

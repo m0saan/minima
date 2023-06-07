@@ -16,6 +16,7 @@ from typing import (
 import numpy
 import numpy as ARRAY_API
 import minima as mi
+numpy.set_printoptions(precision=6, linewidth=160)
 # from graphviz import Digraph
 
 # %% ../nbs/00_autograd.ipynb 71
@@ -497,7 +498,7 @@ class Tensor(Value):
         self._init(None, (), data=data, requires_grad=requires_grad, )
         
     def __repr__(self):
-        return "minima.Tensor(" + str(self.compute_cached_data()) + ")"
+        return "minima.Tensor(\n" + str(self.compute_cached_data()) + ")"
 
     def __str__(self):
         return "tensor(" + self.compute_cached_data().__str__() + ")"

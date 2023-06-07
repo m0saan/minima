@@ -4,7 +4,7 @@
 __all__ = ['EWiseAdd', 'add', 'AddScalar', 'add_scalar', 'EWiseMul', 'multiply', 'MulScalar', 'mul_scalar', 'EWiseDiv', 'divide',
            'DivScalar', 'divide_scalar', 'Negate', 'negate', 'Exp', 'exp', 'ReLU', 'relu', 'PowerScalar',
            'power_scalar', 'Transpose', 'transpose', 'Reshape', 'reshape', 'MatMul', 'matmul', 'Summation', 'summation',
-           'BroadcastTo', 'broadcast_to']
+           'BroadcastTo', 'broadcast_to', 'LogSumExp', 'logsumexp']
 
 # %% ../nbs/01_operators.ipynb 2
 """Operator implementations."""
@@ -18,7 +18,7 @@ from typing import NamedTuple
 import numpy
 import torch
 
-# NOTE: we will import numpy as the array_api
+# NOTE: we will import numpy as the ARRAY_API
 # as the backend for our computations, this line will change in later homeworks
 import numpy as ARRAY_API
 
@@ -1018,3 +1018,35 @@ def broadcast_to(a: Tensor, shape: Tuple[int, ...]) -> Tensor:
     """
     return BroadcastTo(shape)(a)
 
+
+# %% ../nbs/01_operators.ipynb 101
+class LogSumExp(TensorOp):
+    def __init__(self, axes: Optional[tuple] = None):
+        self.axes = axes
+
+    def compute(self, Z):
+        max_z = ARRAY_API.max(Z, axis=self.axes, keepdims=True)
+        self.out = ARRAY_API.squeeze(ARRAY_API.log(ARRAY_API.sum(ARRAY_API.exp(Z - max_z), axis=self.axes, keepdims=True)) + max_z)
+        return self.out
+
+    def gradient(self, out_grad, node):
+        new_shape = list(node.inputs[0].shape)
+
+        # If axes were specified, set those dimensions to 1 in the new shape
+        if self.axes:
+            for axis in self.axes: new_shape[axis] = 1
+        else:
+            new_shape = [1] * len(new_shape)
+        
+        if self.axes:
+            reshaped_grad = reshape(out_grad, new_shape)
+            reshaped_out = reshape(node, new_shape)
+
+            # Broadcast the reshaped out_grad to match the input shape
+            broadcasted_grad = broadcast_to(reshaped_grad, node.inputs[0].shape)
+            broadcasted_out = broadcast_to(reshaped_out, node.inputs[0].shape)
+            return (exp(node.inputs[0] - broadcasted_out) * broadcasted_grad, )
+        return (exp(node.inputs[0] - self.out) * out_grad, )
+
+def logsumexp(a, axes=None): 
+    return LogSumExp(axes=axes)(a)

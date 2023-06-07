@@ -1087,7 +1087,7 @@ class LogSumExp(TensorOp):
         grad : tuple of Tensor
             The gradient of the LogSumExp operation with respect to its input.
         """
-        new_shape = list(node.inputs[0].shape)
+        new_shape = list(node.children[0].shape)
 
         # If axes were specified, set those dimensions to 1 in the new shape
         if self.axes:
@@ -1100,10 +1100,10 @@ class LogSumExp(TensorOp):
             reshaped_out = reshape(node, new_shape)
 
             # Broadcast the reshaped out_grad to match the input shape
-            broadcasted_grad = broadcast_to(reshaped_grad, node.inputs[0].shape)
-            broadcasted_out = broadcast_to(reshaped_out, node.inputs[0].shape)
-            return (exp(node.inputs[0] - broadcasted_out) * broadcasted_grad, )
-        return (exp(node.inputs[0] - self.out) * out_grad, )
+            broadcasted_grad = broadcast_to(reshaped_grad, node.children[0].shape)
+            broadcasted_out = broadcast_to(reshaped_out, node.children[0].shape)
+            return (exp(node.children[0] - broadcasted_out) * broadcasted_grad, )
+        return (exp(node.children[0] - self.out) * out_grad, )
     
 def logsumexp(a, axes=None): 
     return LogSumExp(axes=axes)(a)

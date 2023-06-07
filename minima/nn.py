@@ -122,7 +122,7 @@ class Module:
         """
         return _unpack_params(self.__dict__)
 
-    def _children(self) -> List[Parameter]:
+    def _children(self) -> List["Module"]:
         """
         Returns a list of all child `Module` instances in the module.
         This is done by unpacking the modules from the module's dictionary.
@@ -266,6 +266,7 @@ class Linear(Module):
         
         out = X @ self.weight
         out = out + self.bias.broadcast_to(out.shape) if self.bias else out
+        return out
 
 # %% ../nbs/03_nn.ipynb 11
 class Flatten(Module):
@@ -290,7 +291,7 @@ class Flatten(Module):
         Returns:
             Tensor: The output tensor, which is a 2D tensor with the same number of elements as the input tensor.
         """
-        return X.reshape(X.shape[0], -1)
+        return X.reshape((X.shape[0], -1))
 
 
 # %% ../nbs/03_nn.ipynb 12
@@ -461,7 +462,7 @@ class BatchNorm1d(Module):
         x_centered = x - mean.broadcast_to(x.shape)
         std = ((x_centered ** 2).sum(axes=axes) / bs)
         self.running_mean = self.momentum * mean.data  + (1 - self.momentum) * self.running_mean
-        self.running_var = self.momentum * std.data + (1 - self.momentum) * self.running_var
+        self.running_std = self.momentum * std.data + (1 - self.momentum) * self.running_std
         return mean,std
 
     def forward(self, x: Tensor) -> Tensor:
@@ -479,7 +480,7 @@ class Dropout(Module):
         self.p = p
 
     def forward(self, x: Tensor) -> Tensor:
-        binary_mask = np.random.binomial(n=1, p=self.p, size=x.shape)
+        binary_mask = init.randb(*x.shape, p=self.p)
         if self.training:
             return (binary_mask * x) / (1 - self.p)
         return x

@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="The init module in the minima (mi) library provides a suite of tensor initialization functions to create and initialize tensors in various ways. Each function in this module represents a different strategy for initializing the values of a tensor, such as uniform or normal random values, constant values, or specialized initializations like Xavier or Kaiming methods.">
+
+<title>minima - init</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="minima - init">
+<meta property="og:description" content="The `init` module in the `minima` (mi) library provides a suite of tensor initialization functions to create and initialize tensors in various ways.">
+<meta property="og:site-name" content="minima">
+<meta name="twitter:title" content="minima - init">
+<meta name="twitter:description" content="The `init` module in the `minima` (mi) library provides a suite of tensor initialization functions to create and initialize tensors in various ways.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">minima</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">init</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Welcome to minima</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./autograd.html" class="sidebar-item-text sidebar-link">autograd</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./operators.html" class="sidebar-item-text sidebar-link">operators</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./init.html" class="sidebar-item-text sidebar-link active">init</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./nn.html" class="sidebar-item-text sidebar-link">nn</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#rand" id="toc-rand" class="nav-link active" data-scroll-target="#rand">rand</a></li>
+  <li><a href="#randn" id="toc-randn" class="nav-link" data-scroll-target="#randn">randn</a></li>
+  <li><a href="#constant" id="toc-constant" class="nav-link" data-scroll-target="#constant">constant</a></li>
+  <li><a href="#ones" id="toc-ones" class="nav-link" data-scroll-target="#ones">ones</a></li>
+  <li><a href="#zeros" id="toc-zeros" class="nav-link" data-scroll-target="#zeros">zeros</a></li>
+  <li><a href="#randb" id="toc-randb" class="nav-link" data-scroll-target="#randb">randb</a></li>
+  <li><a href="#one_hot" id="toc-one_hot" class="nav-link" data-scroll-target="#one_hot">one_hot</a></li>
+  <li><a href="#glorotxavier-initialization" id="toc-glorotxavier-initialization" class="nav-link" data-scroll-target="#glorotxavier-initialization">Glorot/Xavier Initialization</a></li>
+  <li><a href="#xavier_normal" id="toc-xavier_normal" class="nav-link" data-scroll-target="#xavier_normal">xavier_normal</a></li>
+  <li><a href="#xavier_uniform" id="toc-xavier_uniform" class="nav-link" data-scroll-target="#xavier_uniform">xavier_uniform</a></li>
+  <li><a href="#he-initialization" id="toc-he-initialization" class="nav-link" data-scroll-target="#he-initialization">He Initialization</a></li>
+  <li><a href="#kaiming_normal" id="toc-kaiming_normal" class="nav-link" data-scroll-target="#kaiming_normal">kaiming_normal</a></li>
+  <li><a href="#kaiming_uniform" id="toc-kaiming_uniform" class="nav-link" data-scroll-target="#kaiming_uniform">kaiming_uniform</a></li>
+  <li><a href="#export" id="toc-export" class="nav-link" data-scroll-target="#export">Export</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/m0saan/minima/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">init</h1>
+</div>
+
+<div>
+  <div class="description">
+    The <code>init</code> module in the <code>minima</code> (mi) library provides a suite of tensor initialization functions to create and initialize tensors in various ways. Each function in this module represents a different strategy for initializing the values of a tensor, such as uniform or normal random values, constant values, or specialized initializations like Xavier or Kaiming methods.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<ol type="1">
+<li><strong><a href="https://m0saan.github.io/minima/init.html#rand"><code>rand</code></a></strong>: This function generates a tensor filled with random numbers drawn from a uniform distribution between <code>low</code> and <code>high</code> (defaulting to 0 and 1). It does this by creating an array of random values on the specified device (defaulting to CPU), then scales and shifts these values to the correct range. The result is wrapped in a <code>mi.Tensor</code> object, which supports automatic differentiation if <code>requires_grad</code> is True.</li>
+</ol>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L12" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="rand" class="level3">
+<h3 class="anchored" data-anchor-id="rand">rand</h3>
+<blockquote class="blockquote">
+<pre><code> rand (*shape, low=0.0, high=1.0, device=None, dtype='float32',
+       requires_grad=False)</code></pre>
+</blockquote>
+<p>Generates a tensor with random numbers uniformly distributed between <code>low</code> and <code>high</code>.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>shape</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>low</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>high</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>device</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>dtype</td>
+<td>str</td>
+<td>float32</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>requires_grad</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A tensor of shape <code>shape</code>, filled with random numbers from the uniform distribution between <code>low</code> and <code>high</code>.</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>rand(<span class="dv">10</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>minima.Tensor([[0.8361942  0.7891384  0.10970007 0.5923745  0.22967269]
+ [0.61836874 0.12242746 0.89674276 0.26497158 0.25622988]
+ [0.8375568  0.04936132 0.21718413 0.15642066 0.10232401]
+ [0.1440296  0.13674147 0.40588015 0.33155832 0.28403464]
+ [0.58986247 0.20638846 0.24636365 0.75810486 0.94382447]
+ [0.74609196 0.00459267 0.48561355 0.20537768 0.17416522]
+ [0.24115583 0.06162176 0.3904394  0.9618843  0.8685511 ]
+ [0.42657614 0.42485094 0.19993785 0.9789261  0.9477727 ]
+ [0.02524497 0.48020166 0.7375612  0.7842982  0.92582405]
+ [0.12680373 0.41048595 0.00874551 0.16642605 0.39158627]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> rand(<span class="dv">10</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>t.dtype, t.device, t.requires_grad</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>(dtype('float32'), minima.cpu(), False)</code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li><strong><a href="https://m0saan.github.io/minima/init.html#randn"><code>randn</code></a></strong>: Similar to <a href="https://m0saan.github.io/minima/init.html#rand"><code>rand</code></a>, but generates numbers from a normal distribution with the specified mean and standard deviation (defaulting to 0 and 1). This is done by creating an array of normally-distributed random values, then scaling and shifting them to match the requested parameters.</li>
+</ol>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L44" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="randn" class="level3">
+<h3 class="anchored" data-anchor-id="randn">randn</h3>
+<blockquote class="blockquote">
+<pre><code> randn (*shape, mean=0.0, std=1.0, device=None, dtype='float32',
+        requires_grad=False)</code></pre>
+</blockquote>
+<p>Generates a tensor with random numbers normally distributed with specified mean and standard deviation.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>shape</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>mean</td>
+<td>float</td>
+<td>0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>std</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>device</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>dtype</td>
+<td>str</td>
+<td>float32</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>requires_grad</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A tensor of shape <code>shape</code>, filled with random numbers from the normal distribution with the specified mean and standard deviation.</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> randn(<span class="dv">5</span>,<span class="dv">5</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>t</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>minima.Tensor([[ 1.3397974   0.64010125 -0.9311074   0.6728155  -0.1192577 ]
+ [ 0.7008655  -0.7104067  -0.89565736 -0.8261754   0.72841895]
+ [-0.8426411  -0.8788722  -0.661193   -1.4981922   0.15918176]
+ [ 0.9665735  -1.2228402   0.7100398   0.4944528   0.34494334]
+ [-0.22832021  0.5712975   1.866018   -0.6395092   0.90164375]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>t.shape, t.dtype, t.device, t.requires_grad</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>((5, 5), dtype('float32'), minima.cpu(), True)</code></pre>
+</div>
+</div>
+<ol start="3" type="1">
+<li><strong><a href="https://m0saan.github.io/minima/init.html#constant"><code>constant</code></a></strong>: This function creates a tensor filled with a constant value <code>c</code> (defaulting to 1). It does this by creating an array of ones on the specified device and then scaling these ones by the constant value.</li>
+</ol>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L74" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="constant" class="level3">
+<h3 class="anchored" data-anchor-id="constant">constant</h3>
+<blockquote class="blockquote">
+<pre><code> constant (*shape, c=1.0, device=None, dtype='float32',
+           requires_grad=False)</code></pre>
+</blockquote>
+<p>Generates a tensor filled with a constant value.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>shape</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>c</td>
+<td>float</td>
+<td>1.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>device</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>dtype</td>
+<td>str</td>
+<td>float32</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>requires_grad</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A tensor of shape <code>shape</code>, filled with the constant value <code>c</code>.</strong></td>
+</tr>
+</tbody>
+</table>
+<ol start="4" type="1">
+<li><strong><a href="https://m0saan.github.io/minima/init.html#ones"><code>ones</code></a> and <a href="https://m0saan.github.io/minima/init.html#zeros"><code>zeros</code></a></strong>: These functions are simply shortcuts for creating tensors filled with ones or zeros, respectively. They’re implemented by calling the <a href="https://m0saan.github.io/minima/init.html#constant"><code>constant</code></a> function with <code>c</code> set to 1 or 0.</li>
+</ol>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L102" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ones" class="level3">
+<h3 class="anchored" data-anchor-id="ones">ones</h3>
+<blockquote class="blockquote">
+<pre><code> ones (*shape, device=None, dtype='float32', requires_grad=False)</code></pre>
+</blockquote>
+<p>Generates a tensor filled with ones.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>shape</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>device</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>dtype</td>
+<td>str</td>
+<td>float32</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>requires_grad</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A tensor of shape <code>shape</code>, filled with ones.</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L126" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="zeros" class="level3">
+<h3 class="anchored" data-anchor-id="zeros">zeros</h3>
+<blockquote class="blockquote">
+<pre><code> zeros (*shape, device=None, dtype='float32', requires_grad=False)</code></pre>
+</blockquote>
+<p>Generates a tensor filled with zeros.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>shape</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>device</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>dtype</td>
+<td>str</td>
+<td>float32</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>requires_grad</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A tensor of shape <code>shape</code>, filled with zeros.</strong></td>
+</tr>
+</tbody>
+</table>
+<ol start="5" type="1">
+<li><strong><a href="https://m0saan.github.io/minima/init.html#randb"><code>randb</code></a></strong>: This function creates a binary tensor, with each element independently being True with probability <code>p</code> (defaulting to 0.5). This is done by generating uniformly-distributed random numbers and checking whether they’re less than or equal to <code>p</code>.</li>
+</ol>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L150" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="randb" class="level3">
+<h3 class="anchored" data-anchor-id="randb">randb</h3>
+<blockquote class="blockquote">
+<pre><code> randb (*shape, p=0.5, device=None, dtype='bool', requires_grad=False)</code></pre>
+</blockquote>
+<p>Generates a binary tensor with random values of <code>True</code> or <code>False</code>.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>shape</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>p</td>
+<td>float</td>
+<td>0.5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>device</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>dtype</td>
+<td>str</td>
+<td>bool</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>requires_grad</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A binary tensor of shape <code>shape</code>, filled with random boolean values, where the probability of <code>True</code> is <code>p</code>.</strong></td>
+</tr>
+</tbody>
+</table>
+<ol start="6" type="1">
+<li><strong><a href="https://m0saan.github.io/minima/init.html#one_hot"><code>one_hot</code></a></strong>: This function creates a one-hot encoding tensor. Given a size <code>n</code> and an index <code>i</code>, it creates a tensor of size <code>n</code> with a 1 at the <code>i</code>-th position and 0s elsewhere.</li>
+</ol>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L178" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="one_hot" class="level3">
+<h3 class="anchored" data-anchor-id="one_hot">one_hot</h3>
+<blockquote class="blockquote">
+<pre><code> one_hot (n, i, device=None, dtype='float32', requires_grad=False)</code></pre>
+</blockquote>
+<p>Generates a one-hot encoding tensor.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>n</td>
+<td>int</td>
+<td></td>
+<td>The size of the one-hot vector.</td>
+</tr>
+<tr class="even">
+<td>i</td>
+<td>int</td>
+<td></td>
+<td>The index to be set to <code>1</code> in the one-hot vector.</td>
+</tr>
+<tr class="odd">
+<td>device</td>
+<td>NoneType</td>
+<td>None</td>
+<td>The device where the tensor will be allocated. Default is CPU.</td>
+</tr>
+<tr class="even">
+<td>dtype</td>
+<td>str</td>
+<td>float32</td>
+<td>The data type of the tensor. Default is ‘float32’.</td>
+</tr>
+<tr class="odd">
+<td>requires_grad</td>
+<td>bool</td>
+<td>False</td>
+<td>If True, the tensor is created with gradient tracking. Default is False.</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A one-hot tensor of size <code>n</code>, with the <code>i</code>th element set to <code>1</code> and all others set to <code>0</code>.</strong></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="glorotxavier-initialization" class="level3">
+<h3 class="anchored" data-anchor-id="glorotxavier-initialization">Glorot/Xavier Initialization</h3>
+<p>Xavier initialization, also known as Glorot initialization, is a technique for initializing the weights in artificial neural networks to improve the stability and speed of neural network training. In the paper Understanding the difficulty of training deep feedforward neural networks, researchers identified a value for the variance of the weights that works well to mitigate the problems we’ve discussed.</p>
+<p>Here’s a high-level idea of how it works:</p>
+<p>Neural networks are trained using a method called backpropagation, which involves iteratively adjusting the weights of the network based on the difference between the network’s current output and its desired output.</p>
+<p>One challenge with this process is that the scale of the initial weights can have a large impact on the network’s learning dynamics. If the weights are too large or too small, the network might learn very slowly, or not at all. This is particularly an issue in deep networks where there are many layers of weights to learn.</p>
+<p>Xavier initialization seeks to address this issue by scaling the initial weights in proportion to the number of inputs and outputs of the neuron. Specifically, in Xavier initialization, the weights are drawn from a distribution with zero a mean of 0 and a variance defined as:</p>
+<p><span class="math display">\[
+\text{var}(w)=\frac{2}{n_{in}+n_{out}}
+\]</span></p>
+<p>where <span class="math inline">\(n_{in}\)</span> is the number of inputs to the neuron and <span class="math inline">\(n_{out}\)</span> is the number of outputs. In order to induce the weights to acquire a standard deviation of <span class="math inline">\(\sqrt{\frac{2}{n_{in}+n_{out}}}\)</span>, consequently causing a variance of <span class="math inline">\(\frac{2}{n_{in}+n_{out}}\)</span>, the weights are initially produced randomly from a normal distribution with a mean of 0 and a standard deviation of 1.</p>
+<p>Subsequently, every weight is multiplied by <span class="math inline">\(\sqrt{\frac{2}{n_{in}+n_{out}}}\)</span>, effectively shifting the standard deviation of the distribution to <span class="math inline">\(\sqrt{\frac{2}{n_{in}+n_{out}}}\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/10.xav-init-normal.svg" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Xavier initialization from a normal distribution</figcaption><p></p>
+</figure>
+</div>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L205" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="xavier_normal" class="level3">
+<h3 class="anchored" data-anchor-id="xavier_normal">xavier_normal</h3>
+<blockquote class="blockquote">
+<pre><code> xavier_normal (fan_in, fan_out, gain=1.0, **kwargs)</code></pre>
+</blockquote>
+<p>Initializes a tensor using Xavier (Glorot) Normal initialization.</p>
+<p>This initializer is designed to keep the scale of the gradients roughly the same in all layers. It samples weights from a normal distribution centered around 0 with standard deviation <code>gain * sqrt(2 / (fan_in + fan_out))</code></p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>fan_in</td>
+<td>int</td>
+<td></td>
+<td>The number of input units in the weight tensor.</td>
+</tr>
+<tr class="even">
+<td>fan_out</td>
+<td>int</td>
+<td></td>
+<td>The number of output units in the weight tensor.</td>
+</tr>
+<tr class="odd">
+<td>gain</td>
+<td>float</td>
+<td>1.0</td>
+<td>Scaling factor for the standard deviation of the normal distribution. Default is 1.0.</td>
+</tr>
+<tr class="even">
+<td>kwargs</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A tensor initialized using Xavier Normal initialization.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>It’s worth noting that there is also a Xavier initialization variant suitable for uniform distributions as opposed to normal distributions. The resultant weight matrix will comprise values sampled from a uniform distribution within the scope of <span class="math inline">\((-a, a)\)</span>, with <span class="math inline">\(a\)</span> equalling <span class="math inline">\(\sqrt{\frac{6}{n_{in}+n_{out}}}\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/11.xav-uniform.svg" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Xavier initialization from a uniform distribution</figcaption><p></p>
+</figure>
+</div>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L238" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="xavier_uniform" class="level3">
+<h3 class="anchored" data-anchor-id="xavier_uniform">xavier_uniform</h3>
+<blockquote class="blockquote">
+<pre><code> xavier_uniform (fan_in, fan_out, gain=1.0, **kwargs)</code></pre>
+</blockquote>
+<p>Initializes a tensor using Xavier (Glorot) Uniform initialization.</p>
+<p>This initializer is designed to keep the scale of the gradients roughly the same in all layers. It samples weights from a uniform distribution within the range <code>[-gain * sqrt(6 / (fan_in + fan_out)), gain * sqrt(6 / (fan_in + fan_out))]</code></p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>fan_in</td>
+<td>int</td>
+<td></td>
+<td>The number of input units in the weight tensor.</td>
+</tr>
+<tr class="even">
+<td>fan_out</td>
+<td>int</td>
+<td></td>
+<td>The number of output units in the weight tensor.</td>
+</tr>
+<tr class="odd">
+<td>gain</td>
+<td>float</td>
+<td>1.0</td>
+<td>Scaling factor for the range of the uniform distribution. Default is 1.0.</td>
+</tr>
+<tr class="even">
+<td>kwargs</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A tensor initialized using Xavier Uniform initialization.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Both normal and uniform distributions have demonstrated effectiveness in practical applications, and it is up to the network designer to select the preferred method. Xavier initialization is frequently utilized in practical scenarios to promote more stable training and circumvent issues that stem from unstable gradients, such as the vanishing and exploding gradient predicaments.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize weights with Xavier/Glorot initialization</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> xavier_uniform(fan_in<span class="op">=</span><span class="dv">10</span>, fan_out<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>W</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>minima.Tensor([[-0.1622775   0.4536291   0.61989725 -0.02014413 -0.05646893]
+ [ 0.5858742   0.46239555  0.20997366  0.46705866  0.23186018]
+ [-0.24604936  0.06220854  0.6072554  -0.05731776  0.5148139 ]
+ [-0.0666193  -0.3852586   0.03337919  0.5635869   0.5360037 ]
+ [-0.36881718  0.4481966  -0.5299952  -0.16656235 -0.63166136]
+ [ 0.06658348 -0.02263997  0.3014384  -0.15522511  0.3325003 ]
+ [-0.12717669 -0.02845087 -0.36774656  0.41525584 -0.46239212]
+ [-0.5931512  -0.541313   -0.5024823   0.2106733   0.14501753]
+ [-0.38586646 -0.3023581   0.2594077   0.27719358 -0.1911264 ]
+ [-0.3176814   0.59976697  0.60364455  0.07043133  0.21091662]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> xavier_normal(fan_in<span class="op">=</span><span class="dv">10</span>, fan_out<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>W</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>minima.Tensor([[ 0.03059636  0.40731347  0.04486648 -0.20211084 -0.2908123 ]
+ [-0.07282545 -0.03428365  0.31833392  0.10940555  0.05456669]
+ [-0.35267887  0.58239627  0.20920038 -0.05054335  0.06172116]
+ [ 0.1331309   0.284902    0.15670004  0.22623208 -0.6965369 ]
+ [ 0.43259475  0.42572162 -0.40264252 -0.43965283  0.46393195]
+ [ 0.710218   -0.02606277 -0.06617628 -0.9257728   0.3177419 ]
+ [-0.03474366 -0.42733535  0.5783244   0.29713896 -0.16121665]
+ [ 0.7878572  -0.01783044  0.23402494  0.20502235 -0.6642037 ]
+ [-0.08082991 -0.18710302  0.13123396  0.42042506  0.17879266]
+ [ 0.15647691  0.3683187  -0.15457386 -0.51149946 -0.7011396 ]])</code></pre>
+</div>
+</div>
+<p>The original Xavier initialization was designed for use with the sigmoid activation function, which is symmetric around zero. If you’re using a different activation function, like ReLU, you might need a different initialization scheme, like He initialization, which is a modification of Xavier initialization designed for ReLU and other non-symmetric activation functions.</p>
+</section>
+<section id="he-initialization" class="level3">
+<h3 class="anchored" data-anchor-id="he-initialization">He Initialization</h3>
+<p>Kaiming Initialization, also known as He Initialization, is a method used in initializing the weights of Neural Networks. This initialization method is designed specifically for neural networks with Rectified Linear Unit (ReLU) activation functions. It was proposed by Kaiming He et al.&nbsp;in their 2015 paper “Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification”.</p>
+<p><strong>Principles of Kaiming Initialization:</strong></p>
+<p>The basic idea of Kaiming Initialization is to keep the variance of the input and output of each layer of the neural network as consistent as possible during the forward and backward propagation. This is to solve the problem of gradient dispersion or explosion caused by the deepening of the neural network layer, which can help the model learn effectively.</p>
+<p>Kaiming initialization initializes a weight matrix <span class="math inline">\(w\)</span> with random values sampled from a normal distribution with mean of <span class="math inline">\(0\)</span> and variance</p>
+<p><span class="math display">\[\text{var}(w)=\frac{2}{n_{i}}\]</span></p>
+<p>Here, <code>n_i</code> is the number of inputs to the neuron, <code>w</code> is the weight vector.</p>
+<p>Just as with Xavier initialization, to force the weights distribution to take on this variance, the weights ar first randomly generated from a normal distribution with centered around 0 with a standard deviation of 1. Then, each weight is multiplied by</p>
+<p><span class="math display">\[\sqrt{\frac{2}{n_{i}}}\]</span></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/12.kaiming-normal.svg" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Kaiming initialization from a normal distributiont</figcaption><p></p>
+</figure>
+</div>
+<p>where <code>n</code> is the number of inputs coming into a neuron (also known as the “fan-in”).</p>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L271" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="kaiming_normal" class="level3">
+<h3 class="anchored" data-anchor-id="kaiming_normal">kaiming_normal</h3>
+<blockquote class="blockquote">
+<pre><code> kaiming_normal (fan_in, fan_out, nonlinearity='relu', **kwargs)</code></pre>
+</blockquote>
+<p>Fills the input Tensor with values according to the method described in “Delving deep into rectifiers: Surpassing human-level performance on ImageNet classification” - He, K. et al.&nbsp;(2015), using a normal distribution. The resulting tensor will have values sampled from normal distribution with mean=0 and std=sqrt(2 / fan_in).</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>fan_in</td>
+<td>int</td>
+<td></td>
+<td>Number of input units in the weight tensor.</td>
+</tr>
+<tr class="even">
+<td>fan_out</td>
+<td>int</td>
+<td></td>
+<td>Number of output units in the weight tensor.</td>
+</tr>
+<tr class="odd">
+<td>nonlinearity</td>
+<td>str</td>
+<td>relu</td>
+<td>The non-linear function (<code>nn.functional</code> name), recommended to use only with ‘relu’ or ‘leaky_relu’. Default is ‘relu’.</td>
+</tr>
+<tr class="even">
+<td>kwargs</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A tensor of shape (fan_in, fan_out), filled with random numbers from the normal distribution according to the Kaiming initialization.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>There is also a version of Kaiming initialization to use for uniform distributions rather than normal distributions. The resulting weight matrix will have values sampled from a uniform distribution within the range <span class="math inline">\((-a, a)\)</span>, where</p>
+<p><span class="math display">\[a = \sqrt{\frac{6}{n_{i}}}\]</span></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/13.kaiming-uniform.svg" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Kaiming initialization from a uniform distributiont</figcaption><p></p>
+</figure>
+</div>
+<hr>
+<p><a href="https://github.com/m0saan/minima/blob/main/minima/init.py#L303" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="kaiming_uniform" class="level3">
+<h3 class="anchored" data-anchor-id="kaiming_uniform">kaiming_uniform</h3>
+<blockquote class="blockquote">
+<pre><code> kaiming_uniform (fan_in, fan_out, nonlinearity='relu', **kwargs)</code></pre>
+</blockquote>
+<p>Fills the input Tensor with values according to the method described in “Delving deep into rectifiers: Surpassing human-level performance on ImageNet classification” - He, K. et al.&nbsp;(2015), using a uniform distribution. The resulting tensor will have values sampled from uniform distribution in the range [-std, std] where std = sqrt(2 / fan_in).</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>fan_in</td>
+<td>int</td>
+<td></td>
+<td>Number of input units in the weight tensor.</td>
+</tr>
+<tr class="even">
+<td>fan_out</td>
+<td>int</td>
+<td></td>
+<td>Number of output units in the weight tensor.</td>
+</tr>
+<tr class="odd">
+<td>nonlinearity</td>
+<td>str</td>
+<td>relu</td>
+<td>The non-linear function (<code>nn.functional</code> name), recommended to use only with ‘relu’ or ‘leaky_relu’. Default is ‘relu’.</td>
+</tr>
+<tr class="even">
+<td>kwargs</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>mi.Tensor</strong></td>
+<td></td>
+<td><strong>A tensor of shape (fan_in, fan_out), filled with random numbers from the uniform distribution according to the Kaiming initialization.</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Advantages of Kaiming Initialization:</strong></p>
+<ol type="1">
+<li>It helps to keep the variance of the gradients roughly the same across all layers. This ensures that all layers in the network learn at about the same speed, avoiding the saturation of activation functions, and it can also help speed up the convergence of the network.</li>
+<li>It performs better with ReLU and its variants because it accounts for the fact that the variance of the output of a neuron with a ReLU activation function is half the variance of its input.</li>
+</ol>
+</section>
+<section id="export" class="level2">
+<h2 class="anchored" data-anchor-id="export">Export</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nbdev<span class="op">;</span> nbdev.nbdev_export()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

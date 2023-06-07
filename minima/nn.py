@@ -94,30 +94,64 @@ def _child_modules(value: object) -> List["Module"]:
 
 # %% ../nbs/03_nn.ipynb 6
 class Module:
+    """
+    Base class for all neural network modules in Minima.
+
+    Your models should also subclass this class. Subclasses should define a `forward` method.
+
+    Attributes:
+    - `training` (bool): Module is initialized in training mode by default. Use `eval()` to switch it to evaluation mode.
+
+    Methods:
+    - `parameters()`: Returns a list of all `Parameter` instances in the module.
+    - `_children()`: Returns a list of all child `Module` instances.
+    - `eval()`: Switches the module and all its children to evaluation mode.
+    - `train()`: Switches the module and all its children back to training mode.
+    - `__call__()`: The call method, which simply calls the `forward` method, must be defined by all subclasses.
+    """
     
     def __init__(self):
         self.training = True
-        
+
     def parameters(self) -> List[Parameter]:
+        """
+        Returns a list of all `Parameter` instances in the module.
+        This is done by unpacking the parameters from the module's dictionary.
+        """
         return _unpack_params(self.__dict__)
-    
+
     def _children(self) -> List[Parameter]:
+        """
+        Returns a list of all child `Module` instances in the module.
+        This is done by unpacking the modules from the module's dictionary.
+        """
         return _child_modules(self.__dict__)
-    
+
     def eval(self):
+        """
+        Switches the module and all its child modules to evaluation mode.
+        """
         self.training = False
         for m in self._children():
             m.training = False
-            
+
     def train(self):
+        """
+        Switches the module and all its child modules to training mode.
+        """
         self.training = True
         for m in self._children():
             m.training = True
-            
+
     def __call__(self, *args, **kwargs):
+        """
+        Defines the call method for the module.
+        This method simply calls the forward method and must be overridden by all subclasses.
+        """
         return self.forward(*args, **kwargs)
 
-# %% ../nbs/03_nn.ipynb 8
+
+# %% ../nbs/03_nn.ipynb 7
 class Linear(Module):
     """
     A class representing a fully connected (linear) layer in a neural network.
@@ -135,7 +169,14 @@ class Linear(Module):
         forward(X: Tensor) -> Tensor: Compute the forward pass of the layer.
     """
     
-    def __init__(self, in_features, out_features, bias=True, device=None, dtype="float32"):
+    def __init__(
+        self,
+        in_features, # The number of input features.
+        out_features,# The number of output features.
+        bias=True, # Whether or not to include a bias term. Default is True.
+        device=None, # The device to store the Parameters on. Default is None, which means CPU.
+        dtype="float32" # The data type of the Parameters. Default is 'float32'.
+    ):
         """
         Initialize the layer with given input/output feature sizes and, optionally, bias, device, and dtype.
 

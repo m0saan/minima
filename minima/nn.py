@@ -339,7 +339,7 @@ class CrossEntropyLoss(Module):
         return (log_sum_exp_logits - true_class_logits_sum) / input.shape[0]
 
 
-# %% ../nbs/03_nn.ipynb 29
+# %% ../nbs/03_nn.ipynb 31
 class LayerNorm1d(Module):
     """
     1D Layer normalization module in Minima.
@@ -398,7 +398,7 @@ class LayerNorm1d(Module):
         return self.weight.broadcast_to(x.shape) * x_normed + self.bias.broadcast_to(x.shape)
 
 
-# %% ../nbs/03_nn.ipynb 30
+# %% ../nbs/03_nn.ipynb 34
 class BatchNorm1d(Module):
     """
     1D Batch normalization module in Minima.
@@ -456,6 +456,20 @@ class BatchNorm1d(Module):
         self.running_std = Tensor(init.ones(dim, device=device, dtype=dtype))
         
     def update_stats(self, x: Tensor) -> Tuple[Tensor, Tensor]:
+        """
+        Updates the running mean and running variance of the input tensor.
+        
+        Parameters:
+        ----------
+        x : Tensor
+            Input tensor.
+        
+        Returns:
+        ----------
+        Tuple[Tensor, Tensor]
+            Mean and variance of the input tensor.
+        """
+
         bs, fs = x.shape
         axes=(0,)
         mean = x.sum(axes=axes) / bs
@@ -466,6 +480,22 @@ class BatchNorm1d(Module):
         return mean,std
 
     def forward(self, x: Tensor) -> Tensor:
+        """
+        Forward propagation of the batch normalization layer.
+        
+        Applies the batch normalization to the input tensor.
+        
+        Parameters:
+        ----------
+        x : Tensor
+            Input tensor.
+        
+        Returns:
+        ----------
+        Tensor
+            Output tensor after applying batch normalization.
+        """
+        
         if self.training:
             mean, std = self.update_stats(x)
         else:
@@ -473,28 +503,105 @@ class BatchNorm1d(Module):
         x_normed = (x - mean.broadcast_to(x.shape)) / (std.broadcast_to(x.shape) + self.eps) ** .5
         return self.weight.broadcast_to(x.shape) * x_normed + self.bias.broadcast_to(x.shape)
 
-# %% ../nbs/03_nn.ipynb 31
+# %% ../nbs/03_nn.ipynb 35
 class Dropout(Module):
+    """
+    Dropout Layer for a Neural Network.
+    
+    This class represents a dropout layer in a neural network, which is a simple 
+    and effective regularization technique.
+    During training, it randomly zeroes out some of the elements of the input tensor
+    with probability p using samples from a Bernoulli distribution.
+    
+    Parameters:
+    ----------
+    p: float, optional, default = 0.5
+        Probability of an element to be zeroed. Default: 0.5.
+    """
+    
     def __init__(self, p = 0.5):
+        """
+        Initializes the Dropout layer with the specified probability.
+        
+        Parameters:
+        ----------
+        p : float
+            Probability of an element to be zeroed.
+        """
+        
         super().__init__()
         self.p = p
 
     def forward(self, x: Tensor) -> Tensor:
+        """
+        Forward propagation of the dropout layer.
+        
+        If the layer is in training mode, it applies dropout to the input tensor. 
+        If the layer is in evaluation mode, it returns the input tensor as is.
+        
+        Parameters:
+        ----------
+        x : Tensor
+            Input tensor.
+        
+        Returns:
+        ----------
+        Tensor
+            Output tensor after applying dropout.
+        """
+        
         binary_mask = init.randb(*x.shape, p=self.p)
         if self.training:
             return (binary_mask * x) / (1 - self.p)
         return x
 
-# %% ../nbs/03_nn.ipynb 32
+
+# %% ../nbs/03_nn.ipynb 36
 class Residual(Module):
+    """
+    Residual Layer for a Neural Network.
+    
+    This class represents a residual layer in a neural network, which is a technique that helps to overcome
+    the problem of vanishing and exploding gradients in deep neural networks. It achieves this by allowing
+    gradients to pass through layers directly (via an identity shortcut connection) without any modification.
+
+    Parameters:
+    ----------
+    fn: Module
+        The function to be applied to the input tensor.
+    """
+    
     def __init__(self, fn: Module):
+        """
+        Initializes the Residual layer with the specified function.
+        
+        Parameters:
+        ----------
+        fn : Module
+            The function to be applied to the input tensor.
+        """
         super().__init__()
         self.fn = fn
 
     def forward(self, x: Tensor) -> Tensor:
+        """
+        Forward propagation of the residual layer.
+        
+        Applies the function to the input tensor and then adds the result to the original input tensor.
+        
+        Parameters:
+        ----------
+        x : Tensor
+            Input tensor.
+        
+        Returns:
+        ----------
+        Tensor
+            Output tensor after applying the function and adding the result to the original input.
+        """
         return x + self.fn(x)
 
-# %% ../nbs/03_nn.ipynb 33
+# %% ../nbs/03_nn.ipynb 37
 class Identity(Module):
     def forward(self, x):
         return x

@@ -477,7 +477,7 @@ class Exp(TensorOp):
         Returns:
         The gradients with respect to the inputs.
         """
-        return (out_grad * self.out, )
+        return (out_grad * Tensor(self.out), )
 
 def exp(a: Tensor) -> Tensor:
     """

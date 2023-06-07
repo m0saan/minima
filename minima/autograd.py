@@ -18,160 +18,6 @@ import numpy as ARRAY_API
 import minima as mi
 # from graphviz import Digraph
 
-# %% ../nbs/00_autograd.ipynb 20
-class Value:
-    """
-    Represents a node within a computational graph.
-
-    This class encapsulates a single value and its relationships in the graph, making it easy to track and manage the value's dependencies, 
-    the operation that produced it, and whether it requires a gradient for backpropagation. It's central to the functioning of automatic 
-    differentiation within deep learning frameworks.
-
-    Attributes:
-        op (Operator)
-        _prev (Set['Value']) 
-        cached_data (NDArray)
-        requires_grad (bool)
-    """
-    def __init__(self, data, _children=(), _op='', label=''):
-        self._data = data
-        self.grad = 0
-        self.children = set(_children)
-        self._op = _op
-        self.label = label
-
-    def __add__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data + other._data, (self, other), '+')
-        return out
-
-    def __mul__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data * other._data, (self, other), '*')
-        return out
-
-    @property
-    def data(self):
-        return self._data
-    
-    @data.setter
-    def data(self, data):
-        self._data = data
-
-# %% ../nbs/00_autograd.ipynb 47
-class Value:
-    """
-    Represents a node within a computational graph.
-
-    This class encapsulates a single value and its relationships in the graph, making it easy to track and manage the value's dependencies, 
-    the operation that produced it, and whether it requires a gradient for backpropagation. It's central to the functioning of automatic 
-    differentiation within deep learning frameworks.
-
-    Attributes:
-        op (Operator)
-        _prev (Set['Value']) 
-        cached_data (NDArray)
-        requires_grad (bool)
-    """
-    def __init__(self, data, _children=(), _op='', label=''):
-        self._data = data
-        self.grad = 0
-        self._backward = lambda: None
-        self.children = set(_children)
-        self._op = _op
-        self.label = label
-    
-    def __add__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data + other._data, (self, other), '+')
-
-        def _backward():
-            self.grad += out.grad
-            other.grad += out.grad
-        out._backward = _backward
-
-        return out
-
-    def __mul__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data * other._data, (self, other), '*')
-
-        def _backward():
-            self.grad += other._data * out.grad
-            other.grad += self._data * out.grad
-        out._backward = _backward
-
-        return out
-    
-    def __repr__(self):
-        return f"Value(data={self._data}, grad={self.grad})"
-
-# %% ../nbs/00_autograd.ipynb 67
-class Value:
-    """
-    Represents a node within a computational graph.
-
-    This class encapsulates a single value and its relationships in the graph, making it easy to track and manage the value's dependencies, 
-    the operation that produced it, and whether it requires a gradient for backpropagation. It's central to the functioning of automatic 
-    differentiation within deep learning frameworks.
-
-    Attributes:
-        op (Operator)
-        _prev (Set['Value']) 
-        cached_data (NDArray)
-        requires_grad (bool)
-    """
-    def __init__(self, data, _children=(), _op='', label=''):
-        self._data = data
-        self.grad = 0
-        self._backward = lambda: None
-        self.children = set(_children)
-        self._op = _op
-        self.label = label
-    
-    def __add__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data + other._data, (self, other), '+')
-
-        def _backward():
-            self.grad += out.grad
-            other.grad += out.grad
-        out._backward = _backward
-
-        return out
-
-    def __mul__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        out = Value(self._data * other._data, (self, other), '*')
-
-        def _backward():
-            self.grad += other._data * out.grad
-            other.grad += self._data * out.grad
-        out._backward = _backward
-
-        return out
-    
-    def __repr__(self):
-        return f"Value(data={self._data}, grad={self.grad})"
-    
-    def backward(self):
-
-        # topological order all of the children in the graph
-        topo = []
-        visited = set()
-        def build_topo(v):
-            if v not in visited:
-                visited.add(v)
-                for child in v.children:
-                    build_topo(child)
-                topo.append(v)
-        build_topo(self)
-
-        # go one variable at a time and apply the chain rule to get its gradient
-        self.grad = 1
-        for v in reversed(topo):
-            v._backward()
-
 # %% ../nbs/00_autograd.ipynb 71
 class Value:
     """
@@ -427,7 +273,7 @@ class Value:
         return self._data
     
     def is_leaf(self):
-        return self.op is None
+        return self._op is None
 
     def __del__(self):
         global TENSOR_COUNTER
@@ -534,6 +380,42 @@ class TensorOp(Operator):
     def __call__(self, *args):
         return Tensor.make_from_op(self, args)
 
+# %% ../nbs/00_autograd.ipynb 76
+class Value:
+    """
+    Represents a node within a computational graph.
+
+    This class encapsulates a single value and its relationships in the graph, making it easy to track and manage the value's dependencies, 
+    the operation that produced it, and whether it requires a gradient for backpropagation. It's central to the functioning of automatic 
+    differentiation within deep learning frameworks.
+
+    Attributes:
+        op (Operator)
+        _prev (Set['Value']) 
+        cached_data (NDArray)
+        requires_grad (bool)
+    """
+    op: Optional[Operator]  # The operator that produced this node. If the node was initialized from actual data, this is 'None'.
+    children: Set['Value']  # The set of values that this value directly depends on. It's the union of the `_next` sets of all the values in `args`.
+    cached_data: NDArray           # The actual data for this value. It's `None` for values that aren't yet computed.
+    requires_grad: bool     # Specifies whether this node requires a gradient. This is `False` for nodes that don't need gradients.
+    
+    def compute_cached_data(self):
+        """
+        If the data of this tensor has not been computed, computes and caches it.
+        Otherwise, returns the cached data.
+
+        Returns:
+        The actual data of this tensor.
+        """
+
+        if self.cached_data is None:
+            self.cached_data = self.op.compute(*[child.compute_cached_data() for child in self.children])
+        return self.cached_data
+    
+    def is_leaf(self):
+        return self.op is None
+
 # %% ../nbs/00_autograd.ipynb 77
 class Tensor(Value):
     """
@@ -587,7 +469,7 @@ class Tensor(Value):
             if dtype is None:
                 dtype = array.dtype
             if device == array.device and dtype == array.dtype:
-                data = array.realize_data()
+                data = array.compute_cached_data()
             else:
                 # fall back, copy through numpy conversion
                 data = Tensor._array_from_numpy(
@@ -600,10 +482,10 @@ class Tensor(Value):
         self._init(None, (), data=data, requires_grad=requires_grad, )
         
     def __repr__(self):
-        return "minima.Tensor(" + str(self.realize_data()) + ")"
+        return "minima.Tensor(" + str(self.compute_cached_data()) + ")"
 
     def __str__(self):
-        return self.realize_data().__repr__()
+        return "tensor(" + self.compute_cached_data().__str__() + ")"
         
     def _init(
         self,
@@ -632,26 +514,12 @@ class Tensor(Value):
         TENSOR_COUNTER += 1
         if requires_grad is None:
             requires_grad = any(child.requires_grad for child in children)
-        self._op = op
-        self._data = data
+        self.op = op
+        self.cached_data = data
         self.children = children
         self.num_outputs = num_outputs
         self.requires_grad = requires_grad
-        self.label = ''
         self.grad: 'Tensor'
-        
-    def realize_data(self):
-        """
-        If the data of this tensor has not been computed, computes and caches it.
-        Otherwise, returns the cached data.
-
-        Returns:
-        The actual data of this tensor.
-        """
-        
-        if self._data is None:
-            self._data = self._op.compute(*[child.realize_data() for child in self.children])
-        return self._data
     
     @staticmethod
     def _array_from_numpy(numpy_array, device, dtype):
@@ -687,7 +555,7 @@ class Tensor(Value):
         tensor = Tensor.__new__(Tensor)
         tensor._init(op, children)
         if not LAZY_MODE:
-            tensor.realize_data()
+            tensor.compute_cached_data()
         return tensor
     
     def create_detached_tensor(self, data, requires_grad=False) -> 'Tensor':
@@ -712,7 +580,7 @@ class Tensor(Value):
         tensor = Tensor.__new__(Tensor)
         return tensor._init(None,
                             set(),
-                            data=data if not isinstance(data, Tensor) else data.realize_data(),
+                            data=data if not isinstance(data, Tensor) else data.compute_cached_data(),
                             requires_grad=requires_grad
                            )
         
@@ -730,7 +598,7 @@ class Tensor(Value):
         >>> print(t_detached)
         Tensor([1, 2, 3])
         """
-        return self.create_detached_tensor(self.realize_data())
+        return self.create_detached_tensor(self.compute_cached_data())
 
     @property
     def T(self) -> 'Tensor':
@@ -751,7 +619,7 @@ class Tensor(Value):
         <class 'numpy.ndarray'>
         """
         
-        data = self.realize_data()
+        data = self.compute_cached_data()
         if ARRAY_API is numpy: return data
         return data.numpy()  # Data is of type NDArray!
 
@@ -791,7 +659,7 @@ class Tensor(Value):
             value.dtype,
             self.dtype,
         )
-        self._data = value.realize_data()
+        self.cached_data = value.compute_cached_data()
 
     
     @property
@@ -802,7 +670,7 @@ class Tensor(Value):
         Returns:
         A tuple representing the shape of this tensor.
         """
-        return self.realize_data().shape
+        return self.compute_cached_data().shape
 
     @property
     def dtype(self):
@@ -812,7 +680,7 @@ class Tensor(Value):
         Returns:
         The data type of this tensor.
         """
-        return self.realize_data().dtype
+        return self.compute_cached_data().dtype
     
     @property
     def device(self):
@@ -829,7 +697,7 @@ class Tensor(Value):
         cpu
         """
         
-        data = self.realize_data()
+        data = self.compute_cached_data()
         if ARRAY_API is numpy: return cpu()
         return data.device
     
@@ -846,7 +714,7 @@ class Tensor(Value):
         node_to_output_grads_list: Dict[Tensor, Tensor] = {}
         node_to_output_grads_list[self] = self.grad
 
-        def _topological_sort(self) -> List['Tensor']:
+        def topological_sort(t) -> List['Tensor']:
             """
             Given a node in a computational graph, this function returns a list of all nodes in the graph sorted 
             in topological order.
@@ -869,11 +737,11 @@ class Tensor(Value):
                         build_topo(child)
                 reverse_topo_order.append(node)
 
-            build_topo(self)
+            build_topo(t)
             reverse_topo_order.reverse()
             return reverse_topo_order    
 
-        for node in self._topological_sort():
+        for node in topological_sort(self):
             node.grad = node_to_output_grads_list[node]
             # compute grad of current node w.r.t. output node
             # propagate grad to inputs
@@ -1022,7 +890,7 @@ class Tensor(Value):
         Example:
         - If the method is called as `self.__matmul__(other)`, this corresponds to `self @ other` in usual operations.
         """
-        return mi.ops.MatMul()(self, other)
+        return mi.operators.MatMul()(self, other)
     
     
     def matmul(self, other):
@@ -1042,6 +910,9 @@ class Tensor(Value):
 
     def transpose(self, axes=None):
         return mi.operators.Transpose(axes)(self)
+    
+    def exp(self) -> 'Tensor':
+        return mi.operators.Exp()(self)
 
     __radd__ = __add__
     __rmul__ = __mul__

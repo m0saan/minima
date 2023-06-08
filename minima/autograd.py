@@ -502,6 +502,15 @@ class Tensor(Value):
 
     def __str__(self):
         return "tensor(" + self.compute_cached_data().__str__() + ")"
+
+    def __len__(self) -> int:
+        return len(self.cached_data)
+
+    def __getitem__(self, index):
+        return Tensor(self.cached_data[index])
+        
+    def __setitem__(self, index, value):
+        self.cached_data[index] = value
         
     def _init(
         self,

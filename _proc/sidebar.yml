@@ -7,3 +7,4 @@ website:
       - 02_init.ipynb
       - 03_nn.ipynb
       - 04_optim.ipynb
+      - 05_data.ipynb

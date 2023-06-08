@@ -268,7 +268,7 @@ class Linear(Module):
         out = out + self.bias.broadcast_to(out.shape) if self.bias else out
         return out
 
-# %% ../nbs/03_nn.ipynb 11
+# %% ../nbs/03_nn.ipynb 13
 class Flatten(Module):
     """
     A `Flatten` module in Minima.
@@ -294,12 +294,12 @@ class Flatten(Module):
         return X.reshape((X.shape[0], -1))
 
 
-# %% ../nbs/03_nn.ipynb 12
+# %% ../nbs/03_nn.ipynb 14
 class ReLU(Module):
     def forward(self, x: Tensor) -> Tensor:
         return operators.relu(x)
 
-# %% ../nbs/03_nn.ipynb 22
+# %% ../nbs/03_nn.ipynb 24
 class CrossEntropyLoss(Module):
     """
     Cross-entropy loss module in Minima.
@@ -339,7 +339,7 @@ class CrossEntropyLoss(Module):
         return (log_sum_exp_logits - true_class_logits_sum) / input.shape[0]
 
 
-# %% ../nbs/03_nn.ipynb 31
+# %% ../nbs/03_nn.ipynb 33
 class LayerNorm1d(Module):
     """
     1D Layer normalization module in Minima.
@@ -398,7 +398,7 @@ class LayerNorm1d(Module):
         return self.weight.broadcast_to(x.shape) * x_normed + self.bias.broadcast_to(x.shape)
 
 
-# %% ../nbs/03_nn.ipynb 34
+# %% ../nbs/03_nn.ipynb 36
 class BatchNorm1d(Module):
     """
     1D Batch normalization module in Minima.
@@ -503,7 +503,7 @@ class BatchNorm1d(Module):
         x_normed = (x - mean.broadcast_to(x.shape)) / (std.broadcast_to(x.shape) + self.eps) ** .5
         return self.weight.broadcast_to(x.shape) * x_normed + self.bias.broadcast_to(x.shape)
 
-# %% ../nbs/03_nn.ipynb 35
+# %% ../nbs/03_nn.ipynb 37
 class Dropout(Module):
     """
     Dropout Layer for a Neural Network.
@@ -556,7 +556,7 @@ class Dropout(Module):
         return x
 
 
-# %% ../nbs/03_nn.ipynb 36
+# %% ../nbs/03_nn.ipynb 38
 class Residual(Module):
     """
     Residual Layer for a Neural Network.
@@ -601,7 +601,7 @@ class Residual(Module):
         """
         return x + self.fn(x)
 
-# %% ../nbs/03_nn.ipynb 37
+# %% ../nbs/03_nn.ipynb 39
 class Identity(Module):
     def forward(self, x):
         return x

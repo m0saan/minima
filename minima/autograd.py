@@ -19,7 +19,7 @@ import minima as mi
 numpy.set_printoptions(precision=6, linewidth=160)
 # from graphviz import Digraph
 
-# %% ../nbs/00_autograd.ipynb 71
+# %% ../nbs/00_autograd.ipynb 70
 class Value:
     """
     A class representing a scalar value and its gradient in a computational graph.
@@ -329,12 +329,12 @@ class Value:
         
 
 
-# %% ../nbs/00_autograd.ipynb 72
+# %% ../nbs/00_autograd.ipynb 71
 NDArray = numpy.ndarray
 LAZY_MODE = False
 TENSOR_COUNTER = 0
 
-# %% ../nbs/00_autograd.ipynb 73
+# %% ../nbs/00_autograd.ipynb 72
 class Device:
     """Indicates the device supporting an NDArray."""
 
@@ -377,7 +377,7 @@ def all_devices():
     """return a list of all available devices"""
     return [cpu()]
 
-# %% ../nbs/00_autograd.ipynb 74
+# %% ../nbs/00_autograd.ipynb 73
 class Operator:
     
     def __call__(self, *args):
@@ -389,14 +389,14 @@ class Operator:
     def gradient(self, out_grad: 'Value', node: 'Value') -> Union['Value', Tuple['Value']]:
         raise NotImplementedError()
 
-# %% ../nbs/00_autograd.ipynb 75
+# %% ../nbs/00_autograd.ipynb 74
 class TensorOp(Operator):
     """ Op class specialized to output tensors, will be alternate subclasses for other structures """
 
     def __call__(self, *args):
         return Tensor.make_from_op(self, args)
 
-# %% ../nbs/00_autograd.ipynb 76
+# %% ../nbs/00_autograd.ipynb 75
 class Value:
     """
     Represents a node within a computational graph.
@@ -432,7 +432,7 @@ class Value:
     def is_leaf(self):
         return self.op is None
 
-# %% ../nbs/00_autograd.ipynb 77
+# %% ../nbs/00_autograd.ipynb 76
 class Tensor(Value):
     """
     A Tensor represents a multidimensional array of values in a computational graph.

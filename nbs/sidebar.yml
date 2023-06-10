@@ -8,3 +8,6 @@ website:
       - 03_nn.ipynb
       - 04_optim.ipynb
       - 05_data.ipynb
+      - 06_ndarray.ipynb
+      - 07_ndarray_backend_numpy.ipynb
+      - 08_utility.ipynb

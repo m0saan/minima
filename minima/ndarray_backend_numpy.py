@@ -3,8 +3,8 @@
 # %% auto 0
 __all__ = ['Array', 'to_numpy', 'from_numpy', 'fill', 'compact', 'ewise_setitem', 'scalar_setitem', 'ewise_add', 'scalar_add',
            'ewise_mul', 'scalar_mul', 'ewise_div', 'scalar_div', 'scalar_power', 'ewise_maximum', 'scalar_maximum',
-           'ewise_eq', 'scalar_eq', 'ewise_ge', 'scalar_ge', 'ewise_log', 'ewise_exp', 'ewise_tanh', 'matmul',
-           'reduce_max', 'reduce_sum']
+           'ewise_eq', 'scalar_eq', 'ewise_ge', 'scalar_ge', 'ewise_log', 'ewise_exp', 'ewise_tanh', 'reduce_max',
+           'reduce_sum', 'matmul']
 
 # %% ../nbs/07_ndarray_backend_numpy.ipynb 2
 import numpy as np
@@ -26,105 +26,847 @@ class Array:
     def size(self):
         return self.array.size
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 5
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 6
 def to_numpy(a, shape, strides, offset):
+    """
+    Converts a contiguous 1D array into an N-dimensional array using numpy stride tricks.
+
+    This function creates a 'view' of a given 1D array as an N-dimensional array 
+    with the specified shape and strides, starting from the offset index.
+    
+    Parameters
+    ----------
+    a : numpy.ndarray
+        Input 1D array which should be converted.
+    shape : tuple of ints
+        The desired shape of the output array.
+    strides : tuple of ints
+        The number of bytes to step in each dimension when traversing the array.
+    offset : int
+        The index from which the new 'view' of the array should start.
+
+    Returns
+    -------
+    numpy.ndarray
+        N-dimensional array 'view' of the input 1D array.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> _datetype_size = np.array([1]).dtype.itemsize
+    >>> array_1D = np.array([1, 2, 3, 4, 5, 6])
+    >>> to_numpy(array_1D, (2, 3), (3, 1), 0)
+    array([[1, 2, 3],
+           [4, 5, 6]])
+    """
     return np.lib.stride_tricks.as_strided(
         a.array[offset:], shape, tuple([s * _datetype_size for s in strides])
     )
 
 
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 10
 def from_numpy(a: np.ndarray, out) -> None:
+    """
+    Assigns a flattened version of the input N-dimensional array to another array.
+
+    This function takes an input N-dimensional numpy array, flattens it, 
+    and assigns the result to the specified output array.
+
+    Parameters
+    ----------
+    a : numpy.ndarray
+        The input array to be flattened.
+    out : object
+        The output object. Its 'array' attribute should be an array-like 
+        object that will receive the flattened input array.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> class Container:
+    ...     def __init__(self, array):
+    ...         self.array = array
+    >>> array_nd = np.array([[1, 2, 3], [4, 5, 6]])
+    >>> out = Container(np.array([0, 0, 0, 0, 0, 0]))
+    >>> from_numpy(array_nd, out)
+    >>> print(out.array)
+    [1 2 3 4 5 6]
+    """
+    
     out.array[:] = a.flatten()
 
 
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 16
 def fill(out: Array, val) -> None:
+    """
+    Fills an Array object with a specific value.
+
+    This function replaces all the elements of the underlying numpy array of the `out` Array 
+    object with the specified value.
+
+    Parameters
+    ----------
+    out : Array
+        The Array object whose underlying numpy array is to be filled with the specified value.
+    val : scalar
+        The value to fill the Array with.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> out = Array(6)
+    >>> fill(out, 0)
+    >>> print(out)
+    array([0., 0., 0., 0., 0., 0.], dtype=float32)
+    """
     out.array.fill(val)
 
 
-def compact(a, out, shape, strides, offset):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 18
+def compact(a, out: Array, shape, strides, offset):
+    """
+    Transforms a 1D array into an N-dimensional array, flattens it, and assigns it to an Array object.
+
+    This function uses the `to_numpy` function to create an N-dimensional view of 
+    the input array `a` with the specified shape and strides, starting from the offset index.
+    The result is then flattened and assigned to the underlying numpy array of the `out` Array object.
+
+    Parameters
+    ----------
+    a : numpy.ndarray
+        The input 1D array to be transformed.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the flattened N-dimensional array.
+    shape : tuple of ints
+        The desired shape of the N-dimensional array.
+    strides : tuple of ints
+        The number of bytes to step in each dimension when traversing the array.
+    offset : int
+        The index from which the N-dimensional view of the array should start.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> _datetype_size = np.array([1]).dtype.itemsize
+    >>> array_1D = np.array([1, 2, 3, 4, 5, 6])
+    >>> out = Array(6)
+    >>> compact(array_1D, out, (2, 3), (3, 1), 0)
+    >>> print(out)
+    array([1., 2., 3., 4., 5., 6.], dtype=float32)
+    """
+    
     out.array[:] = to_numpy(a, shape, strides, offset).flatten()
 
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 20
+def ewise_setitem(a: Array, out: Array, shape, strides, offset):
+    """
+    Modifies a section of an Array object to be equivalent to another reshaped array, on an element-wise basis.
 
-def ewise_setitem(a, out, shape, strides, offset):
+    This function uses the `to_numpy` function to create a view of a section of the underlying numpy 
+    array of the `out` Array object, determined by `shape`, `strides`, and `offset`. 
+    It then assigns the reshaped `a.array` to this section, performing the operation element-wise.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object whose reshaped underlying numpy array is to be assigned.
+    out : Array
+        The Array object whose underlying numpy array is to be modified.
+    shape : tuple of ints
+        The shape to reshape `a.array` to, and the shape of the section in `out.array`.
+    strides : tuple of ints
+        The number of bytes to step in each dimension when traversing the `out` array.
+    offset : int
+        The index from which the view of the `out` array should start.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> _datetype_size = np.array([1]).dtype.itemsize
+    >>> a = Array(6)
+    >>> a.array[:] = np.array([1, 2, 3, 4, 5, 6])
+    >>> out = Array(9)
+    >>> out.array[:] = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0])
+    >>> ewise_setitem(a, out, (2, 3), (3, 1), 0)
+    >>> print(out)
+    array([1., 2., 3., 4., 5., 6., 0., 0., 0.], dtype=float32)
+    """
+    
     to_numpy(out, shape, strides, offset)[:] = a.array.reshape(shape)
 
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 28
+def scalar_setitem(val, out: Array, shape, strides, offset):
+    """
+    Fills a section of an Array object with a specific scalar value.
 
-def scalar_setitem(size, val, out, shape, strides, offset):
+    This function uses the `to_numpy` function to create a view of a section of the underlying numpy 
+    array of the `out` Array object, determined by `shape`, `strides`, and `offset`. 
+    It then assigns the scalar value `val` to this section.
+
+    Parameters
+    ----------
+    val : scalar
+        The scalar value to be assigned to the section of `out.array`.
+    out : Array
+        The Array object whose underlying numpy array is to be modified.
+    shape : tuple of ints
+        The shape of the section in `out.array`.
+    strides : tuple of ints
+        The number of bytes to step in each dimension when traversing the `out` array.
+    offset : int
+        The index from which the view of the `out` array should start.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> _datetype_size = np.array([1]).dtype.itemsize
+    >>> out = Array(9)
+    >>> out.array[:] = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+    >>> scalar_setitem(0, out, (2, 3), (3, 1), 0)
+    >>> print(out)
+    array([0., 0., 0., 0., 0., 0., 7., 8., 9.], dtype=float32)
+    """
+    
     to_numpy(out, shape, strides, offset)[:] = val
 
 
-def ewise_add(a, b, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 30
+def ewise_add(a: Array, b: Array, out: Array):
+    """
+    Performs an element-wise addition of two Array objects and assigns the result to a third Array object.
+
+    This function adds the underlying numpy arrays of `a` and `b` on an element-wise basis, 
+    and assigns the result to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a, b : Array
+        The Array objects to be added.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> b = Array(3)
+    >>> b.array[:] = np.array([4, 5, 6])
+    >>> out = Array(3)
+    >>> ewise_add(a, b, out)
+    >>> print(out)
+    array([5., 7., 9.], dtype=float32)
+    """
     out.array[:] = a.array + b.array
 
 
-def scalar_add(a, val, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 32
+def scalar_add(a: Array, val, out: Array):
+    """
+    Adds a scalar value to an Array object and assigns the result to another Array object.
+
+    This function adds a scalar value `val` to the underlying numpy array of `a`, 
+    and assigns the result to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object to be added to the scalar value.
+    val : scalar
+        The scalar value to be added to `a.array`.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> out = Array(3)
+    >>> scalar_add(a, 5, out)
+    >>> print(out)
+    array([6., 7., 8.], dtype=float32)
+    """
     out.array[:] = a.array + val
 
 
-def ewise_mul(a, b, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 34
+def ewise_mul(a: Array, b: Array, out: Array):
+    """
+    Performs an element-wise multiplication of two Array objects and assigns the result to a third Array object.
+
+    This function multiplies the underlying numpy arrays of `a` and `b` on an element-wise basis, 
+    and assigns the result to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a, b : Array
+        The Array objects to be multiplied.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> b = Array(3)
+    >>> b.array[:] = np.array([4, 5, 6])
+    >>> out = Array(3)
+    >>> ewise_mul(a, b, out)
+    >>> print(out)
+    array([4., 10., 18.], dtype=float32)
+    """
     out.array[:] = a.array * b.array
 
 
-def scalar_mul(a, val, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 36
+def scalar_mul(a: Array, val, out: Array):
+    """
+    Multiplies an Array object by a scalar value and assigns the result to another Array object.
+
+    This function multiplies a scalar value `val` with the underlying numpy array of `a`, 
+    and assigns the result to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object to be multiplied by the scalar value.
+    val : scalar
+        The scalar value to be multiplied by `a.array`.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> out = Array(3)
+    >>> scalar_mul(a, 5, out)
+    >>> print(out)
+    array([5., 10., 15.], dtype=float32)
+    """
     out.array[:] = a.array * val
 
 
-def ewise_div(a, b, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 38
+def ewise_div(a: Array, b: Array, out: Array):
+    """
+    Performs an element-wise division of two Array objects and assigns the result to a third Array object.
+
+    This function divides the underlying numpy array of `a` by that of `b` on an element-wise basis, 
+    and assigns the result to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a, b : Array
+        The Array objects to be divided.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> b = Array(3)
+    >>> b.array[:] = np.array([4, 5, 6])
+    >>> out = Array(3)
+    >>> ewise_div(a, b, out)
+    >>> print(out)
+    array([0.25, 0.4 , 0.5 ], dtype=float32)
+    """
     out.array[:] = a.array / b.array
 
 
-def scalar_div(a, val, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 40
+def scalar_div(a: Array, val, out: Array):
+    """
+    Divides an Array object by a scalar value and assigns the result to another Array object.
+
+    This function divides the underlying numpy array of `a` by a scalar value `val`, 
+    and assigns the result to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object to be divided by the scalar value.
+    val : scalar
+        The scalar value by which `a.array` is to be divided.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> out = Array(3)
+    >>> scalar_div(a, 2, out)
+    >>> print(out)
+    array([0.5, 1., 1.5], dtype=float32)
+    """
     out.array[:] = a.array / val
 
 
-def scalar_power(a, val, out):
-    out.array[:] = a.array ** power
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 42
+def scalar_power(a: Array, val, out: Array):
+    """
+    Raises an Array object to the power of a scalar value and assigns the result to another Array object.
+
+    This function raises each element in the underlying numpy array of `a` to the power of a scalar value `val`, 
+    and assigns the result to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object to be raised to the power of the scalar value.
+    val : scalar
+        The scalar value which is the exponent for `a.array`.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> out = Array(3)
+    >>> scalar_power(a, 2, out)
+    >>> print(out)
+    array([1., 4., 9.], dtype=float32)
+    """
+    out.array[:] = a.array ** val
 
 
-def ewise_maximum(a, b, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 44
+def ewise_maximum(a: Array, b: Array, out: Array):
+    """
+    Computes the element-wise maximum of two Array objects and assigns the result to a third Array object.
+
+    This function compares the underlying numpy arrays of `a` and `b` on an element-wise basis, 
+    and assigns the maximum value at each position to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a, b : Array
+        The Array objects whose maximum is to be computed.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 4, 3])
+    >>> b = Array(3)
+    >>> b.array[:] = np.array([4, 2, 6])
+    >>> out = Array(3)
+    >>> ewise_maximum(a, b, out)
+    >>> print(out)
+    array([4., 4., 6.], dtype=float32)
+    """
     out.array[:] = np.maximum(a.array, b.array)
 
 
-def scalar_maximum(a, val, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 46
+def scalar_maximum(a: Array, val, out: Array):
+    """
+    Computes the maximum of an Array object and a scalar value, and assigns the result to another Array object.
+
+    This function compares a scalar value `val` with the underlying numpy array of `a`, 
+    and assigns the maximum value at each position to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object whose maximum with `val` is to be computed.
+    val : scalar
+        The scalar value to be compared with `a.array`.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> out = Array(3)
+    >>> scalar_maximum(a, 2, out)
+    >>> print(out)
+    array([2., 2., 3.], dtype=float32)
+    """
     out.array[:] = np.maximum(a.array, val)
 
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 48
+def ewise_eq(a: Array, b: Array, out: Array):
+    """
+    Performs an element-wise comparison for equality between two Array objects and assigns the result to a third Array object.
 
-def ewise_eq(a, b, out):
+    This function compares the underlying numpy arrays of `a` and `b` on an element-wise basis for equality, 
+    and assigns the boolean result (converted to float32) to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a, b : Array
+        The Array objects to be compared.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> b = Array(3)
+    >>> b.array[:] = np.array([1, 2, 4])
+    >>> out = Array(3)
+    >>> ewise_eq(a, b, out)
+    >>> print(out)
+    array([1., 1., 0.], dtype=float32)
+    """
     out.array[:] = (a.array == b.array).astype(np.float32)
 
 
-def scalar_eq(a, val, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 50
+def scalar_eq(a: Array, val, out: Array):
+    """
+    Compares an Array object with a scalar value for equality and assigns the result to another Array object.
+
+    This function compares a scalar value `val` with the underlying numpy array of `a` for equality, 
+    and assigns the boolean result (converted to float32) to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object to be compared with the scalar value.
+    val : scalar
+        The scalar value to be compared with `a.array`.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> out = Array(3)
+    >>> scalar_eq(a, 2, out)
+    >>> print(out)
+    array([0., 1., 0.], dtype=float32)
+    """
     out.array[:] = (a.array == val).astype(np.float32)
 
 
-def ewise_ge(a, b, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 52
+def ewise_ge(a: Array, b: Array, out: Array):
+    """
+    Performs an element-wise comparison to check if elements of one Array object are greater than or equal to those of another Array object. The result is assigned to a third Array object.
+
+    This function compares the underlying numpy arrays of `a` and `b` on an element-wise basis to check if elements in `a` are greater than or equal to those in `b`. 
+    The boolean result (converted to float32) is assigned to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a, b : Array
+        The Array objects to be compared.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> b = Array(3)
+    >>> b.array[:] = np.array([1, 2, 2])
+    >>> out = Array(3)
+    >>> ewise_ge(a, b, out)
+    >>> print(out)
+    array([1., 1., 1.], dtype=float32)
+    """
     out.array[:] = (a.array >= b.array).astype(np.float32)
 
 
-def scalar_ge(a, val, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 54
+def scalar_ge(a: Array, val, out: Array):
+    """
+    Compares an Array object with a scalar value to check if elements in the Array object are greater than or equal to the scalar. The result is assigned to another Array object.
+
+    This function compares a scalar value `val` with the underlying numpy array of `a` to check if elements in `a` are greater than or equal to `val`. 
+    The boolean result (converted to float32) is assigned to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object to be compared with the scalar value.
+    val : scalar
+        The scalar value to be compared with `a.array`.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, 2, 3])
+    >>> out = Array(3)
+    >>> scalar_ge(a, 2, out)
+    >>> print(out)
+    array([0., 1., 1.], dtype=float32)
+    """
     out.array[:] = (a.array >= val).astype(np.float32)
 
 
-def ewise_log(a, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 56
+def ewise_log(a: Array, out: Array):
+    """
+    Computes the natural logarithm of each element in an Array object and assigns the result to another Array object.
+
+    This function applies the natural logarithm (base e) to each element in the underlying numpy array of `a`, 
+    and assigns the result to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object whose natural logarithm is to be computed.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([1, np.exp(1), np.exp(2)])
+    >>> out = Array(3)
+    >>> ewise_log(a, out)
+    >>> print(out)
+    array([0., 1., 2.], dtype=float32)
+    """
     out.array[:] = np.log(a.array)
 
 
-def ewise_exp(a, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 58
+def ewise_exp(a: Array, out: Array):
+    """
+    Computes the exponential of each element in an Array object and assigns the result to another Array object.
+
+    This function applies the exponential (base e) to each element in the underlying numpy array of `a`, 
+    and assigns the result to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object whose exponential is to be computed.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([0, 1, 2])
+    >>> out = Array(3)
+    >>> ewise_exp(a, out)
+    >>> print(out)
+    array([1., 2.7182817, 7.389056], dtype=float32)
+    """
     out.array[:] = np.exp(a.array)
 
 
-def ewise_tanh(a, out):
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 64
+def ewise_tanh(a: Array, out: Array):
+    """
+    Computes the hyperbolic tangent of each element in an Array object and assigns the result to another Array object.
+
+    This function applies the hyperbolic tangent function to each element in the underlying numpy array of `a`, 
+    and assigns the result to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object whose hyperbolic tangent is to be computed.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(3)
+    >>> a.array[:] = np.array([0, 0.5, 1])
+    >>> out = Array(3)
+    >>> ewise_tanh(a, out)
+    >>> print(out)
+    array([0.        , 0.46211717, 0.7615942 ], dtype=float32)
+    """
     out.array[:] = np.tanh(a.array)
 
 
-def matmul(a, b, out, m, n, p):
-    out.array[:] = (a.array.reshape(m, n) @ b.array.reshape(n, p)).reshape(-1)
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 69
+def reduce_max(a: Array, out: Array, reduce_size: int):
+    """
+    Computes the maximum of every `reduce_size` elements in an Array object and assigns the result to another Array object.
 
+    This function reshapes the underlying numpy array of `a` into a 2D array with `reduce_size` columns, 
+    computes the maximum of every `reduce_size` elements (along the second axis), 
+    and assigns the results to the underlying numpy array of `out`.
 
-def reduce_max(a, out, reduce_size):
+    Parameters
+    ----------
+    a : Array
+        The Array object whose maximum of every `reduce_size` elements is to be computed.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+    reduce_size : int
+        The size of elements over which the maximum is to be computed.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(6)
+    >>> a.array[:] = np.array([1, 2, 3, 4, 5, 6])
+    >>> out = Array(2)
+    >>> reduce_max(a, out, 3)
+    >>> print(out)
+    array([3., 6.], dtype=float32)
+    """
     out.array[:] = a.array[:].reshape(-1, reduce_size).max(axis=1)
 
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 73
+def reduce_sum(a: Array, out: Array, reduce_size: int):
+    """
+    Computes the sum of every `reduce_size` elements in an Array object and assigns the result to another Array object.
 
-def reduce_sum(a, out, reduce_size):
+    This function reshapes the underlying numpy array of `a` into a 2D array with `reduce_size` columns, 
+    computes the sum of every `reduce_size` elements (along the second axis), 
+    and assigns the results to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a : Array
+        The Array object whose sum of every `reduce_size` elements is to be computed.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+    reduce_size : int
+        The size of elements over which the sum is to be computed.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(6)
+    >>> a.array[:] = np.array([1, 2, 3, 4, 5, 6])
+    >>> out = Array(2)
+    >>> reduce_sum(a, out, 3)
+    >>> print(out)
+    array([ 6., 15.], dtype=float32)
+    """
     out.array[:] = a.array[:].reshape(-1, reduce_size).sum(axis=1)
-    
+
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 78
+def matmul(a: Array, b: Array, out: Array, m: int, n: int, p: int):
+    """
+    Performs matrix multiplication between two Array objects and assigns the result to another Array object.
+
+    This function reshapes the underlying numpy arrays of `a` and `b` to matrices of dimensions `(m, n)` and `(n, p)` respectively. 
+    It then performs matrix multiplication (`a @ b`), reshapes the result back into a 1D array, 
+    and assigns it to the underlying numpy array of `out`.
+
+    Parameters
+    ----------
+    a, b : Array
+        The Array objects to be multiplied. The sizes of `a.array` and `b.array` should be `m*n` and `n*p` respectively.
+    out : Array
+        The Array object whose underlying numpy array is to be assigned the result.
+    m, n, p : int
+        The dimensions for reshaping `a.array`, `b.array` and the multiplication result.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> a = Array(6)
+    >>> a.array[:] = np.array([1, 2, 3, 4, 5, 6])
+    >>> b = Array(6)
+    >>> b.array[:] = np.array([7, 8, 9, 10, 11, 12])
+    >>> out = Array(4)
+    >>> matmul(a, b, out, 2, 3, 2)
+    >>> print(out)
+    array([ 58.,  64., 139., 154.], dtype=float32)
+    """
+    out.array[:] = (a.array.reshape(m, n) @ b.array.reshape(n, p)).reshape(-1)

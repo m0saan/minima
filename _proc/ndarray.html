@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="The NDArray class in minima is a kind of container that can hold all sorts of elements, especially numbers (but for now just f32 numbers).">
 
-<title>minima - Welcome to minima</title>
+<title>minima - ndarray</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -124,11 +125,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 <link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="minima - Welcome to minima">
-<meta property="og:description" content="">
+<meta property="og:title" content="minima - ndarray">
+<meta property="og:description" content="The NDArray class in minima is a kind of container that can hold all sorts of elements, especially numbers (but for now just f32 numbers).">
 <meta property="og:site-name" content="minima">
-<meta name="twitter:title" content="minima - Welcome to minima">
-<meta name="twitter:description" content="">
+<meta name="twitter:title" content="minima - ndarray">
+<meta name="twitter:description" content="The NDArray class in minima is a kind of container that can hold all sorts of elements, especially numbers (but for now just f32 numbers).">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -148,7 +149,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">Welcome to minima</h1>
+      <h1 class="quarto-secondary-nav-title">ndarray</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -163,7 +164,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">Welcome to minima</a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Welcome to minima</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -196,35 +197,41 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <a href="./data.html" class="sidebar-item-text sidebar-link">data</a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ndarray.html" class="sidebar-item-text sidebar-link active">ndarray</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ndarray_backend_numpy.html" class="sidebar-item-text sidebar-link">ndarray_backend_numpy</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utility.html" class="sidebar-item-text sidebar-link">utility</a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#minima-a-mini-deep-learning-framework" id="toc-minima-a-mini-deep-learning-framework" class="nav-link active" data-scroll-target="#minima-a-mini-deep-learning-framework">minima: A Mini Deep Learning Framework</a>
-  <ul class="collapse">
-  <li><a href="#installing" id="toc-installing" class="nav-link" data-scroll-target="#installing">Installing</a></li>
-  <li><a href="#features" id="toc-features" class="nav-link" data-scroll-target="#features">Features</a></li>
-  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
-  <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation">Documentation</a></li>
-  <li><a href="#contributing" id="toc-contributing" class="nav-link" data-scroll-target="#contributing">Contributing</a></li>
-  <li><a href="#license" id="toc-license" class="nav-link" data-scroll-target="#license">License</a></li>
-  </ul></li>
-  </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/m0saan/minima/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">Welcome to minima</h1>
+<h1 class="title d-none d-lg-block">ndarray</h1>
 </div>
 
+<div>
+  <div class="description">
+    The NDArray class in minima is a kind of container that can hold all sorts of elements, especially numbers (but for now just f32 numbers).
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -238,86 +245,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </header>
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<p><img src="https://github.com/m0saan/minima/workflows/CI/badge.svg" class="img-fluid" alt="CI"> <a href="https://pypi.org/project/minima/#description"><img src="https://img.shields.io/pypi/v/minima?color=blue&amp;label=pypi%20version.png" class="img-fluid" alt="PyPI"></a> <a href="https://anaconda.org/m0saan/minima"><img src="https://img.shields.io/conda/vn/yourusername/minima?color=seagreen&amp;label=conda%20version.png" class="img-fluid" alt="Conda (channel only)"></a> <img src="https://github.com/m0saan/minima/workflows/docs/badge.svg" class="img-fluid" alt="docs"></p>
-<section id="minima-a-mini-deep-learning-framework" class="level1">
-<h1>minima: A Mini Deep Learning Framework</h1>
-<blockquote class="blockquote">
-<p>minima is a lightweight deep learning framewor, lean yet effective tailor-made for educational exploration.<br>
-Just like a delicate sapling inspired by the towering strength of an oak, Minima draws its inspiration from PyTorch.<br>
-Yet, it carves its own identity with a straightforward interface and a curated set of features.<br>
-This makes learning and using it a breeze, allowing you to effortlessly build and train neural networks.<br>
-Indeed, Minima is your friendly companion on the journey to understanding deep learning, where less is often more.</p>
-</blockquote>
-<section id="installing" class="level2">
-<h2 class="anchored" data-anchor-id="installing">Installing</h2>
-<p>You can install minima on your own machines with conda</p>
-<p>If you’re using <a href="https://docs.conda.io/en/latest/miniconda.html">miniconda</a> (recommended) then run:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install minima</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>…or if you’re using <a href="https://www.anaconda.com/products/individual">Anaconda</a> then run:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install minima anaconda</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>To install with pip, use: <code>pip install minima</code>.</p>
-<p>If you plan to develop Minima yourself, or want to be on the cutting edge, you can use an editable install.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/m0saan/minima</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="features" class="level2">
-<h2 class="anchored" data-anchor-id="features">Features</h2>
-<ul>
-<li>Easy to install and use</li>
-<li>Simple and intuitive API for defining and training neural networks</li>
-<li>Built-in support for common layers and activation functions</li>
-<li>Supports both CPU and GPU acceleration</li>
-<li>Compatible with NumPy arrays for easy data manipulation</li>
-</ul>
-</section>
-<section id="usage" class="level2">
-<h2 class="anchored" data-anchor-id="usage">Usage</h2>
-<p>Here’s a simple example of how to define and train a neural network using Minima:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> minima <span class="im">as</span> mi</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the neural network architecture</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> mi.nn.Sequential(</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    mi.nn.Linear(<span class="dv">784</span>, <span class="dv">128</span>),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    mi.nn.ReLU(),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    mi.nn.Linear(<span class="dv">128</span>, <span class="dv">10</span>),</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    mi.nn.Softmax()</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the dataset</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>x_train, y_train, x_test, y_test <span class="op">=</span> load_data()</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>loss_fn <span class="op">=</span> mi.nn.CrossEntropyLoss()</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> mi.optim.SGD(model.parameters(), lr<span class="op">=</span><span class="fl">0.01</span>)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> x_batch, y_batch <span class="kw">in</span> mi.nn.minibatch(x_train, y_train, batch_size<span class="op">=</span><span class="dv">32</span>):</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        y_pred <span class="op">=</span> model(x_batch)</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> loss_fn(y_pred, y_batch)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        loss.backward()</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model(x_test)</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>accuracy <span class="op">=</span> compute_accuracy(y_pred, y_test)</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy: </span><span class="sc">{</span>accuracy<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This example defines a simple neural network with two linear layers and two activation functions, trains it on a dataset using stochastic gradient descent, and evaluates its accuracy on a test set.</p>
-</section>
-<section id="documentation" class="level2">
-<h2 class="anchored" data-anchor-id="documentation">Documentation</h2>
-<p>For more information on how to use minima, please refer to the documentation, which can be found in the website above.</p>
-</section>
-<section id="contributing" class="level2">
-<h2 class="anchored" data-anchor-id="contributing">Contributing</h2>
-<p>coming soon!</p>
-</section>
-<section id="license" class="level2">
-<h2 class="anchored" data-anchor-id="license">License</h2>
-<p>minima is released under the Apache License 2.0. See <code>LICENSE</code> for more information.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nbdev<span class="op">;</span> nbdev.nbdev_export()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
-</section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

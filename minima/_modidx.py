@@ -290,6 +290,5 @@ d = { 'settings': { 'branch': 'main',
                               'minima.optim.SGD.__init__': ('optim.html#sgd.__init__', 'minima/optim.py'),
                               'minima.optim.SGD._opt_step': ('optim.html#sgd._opt_step', 'minima/optim.py'),
                               'minima.optim.SGD._reg_step': ('optim.html#sgd._reg_step', 'minima/optim.py'),
-                              'minima.optim.SGD.step': ('optim.html#sgd.step', 'minima/optim.py'),
-                              'minima.optim.SGD.zero_grad': ('optim.html#sgd.zero_grad', 'minima/optim.py')},
+                              'minima.optim.SGD.step': ('optim.html#sgd.step', 'minima/optim.py')},
             'minima.utility': {'minima.utility.prod': ('utility.html#prod', 'minima/utility.py')}}}

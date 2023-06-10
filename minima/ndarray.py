@@ -4,9 +4,7 @@
 __all__ = []
 
 # %% ../nbs/06_ndarray.ipynb 2
-import operator
 import math
-from functools import reduce
 import numpy as np
 from . import ndarray_backend_numpy
 # from . import ndarray_backend_cpu

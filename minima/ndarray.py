@@ -198,6 +198,40 @@ class NDArray:
         out = NDArray.make(shape=self.shape, device=self.device)
         self.device.compact(self._handle, out._handle, self.shape, self.strides, self.offset)
         return out
+        
+    def as_strided(self, shape, strides) -> 'NDArray':
+        assert len(shape) == len(strides)
+        return NDArray.make(shape=shape, strides=strides, handle=self._handle)
+
+    def flat(self) -> 'NDArray':
+        return self.reshape((self.size, ))
+
+    def to(self, device: BackendDevice) -> 'NDArray':
+        """
+        Transfers this array to the specified device.
+
+        Parameters
+        ----------
+        device : BackendDevice
+            The device to which this array should be transferred.
+
+        Returns
+        -------
+        NDArray
+            This array after it has been transferred to `device`.
+        """
+        return self if device == self.device else NDArray(self.numpy(), device=device)
+        
+    def numpy(self) -> np.ndarray:
+        """
+        Returns a numpy representation of this array.
+
+        Returns
+        -------
+        np.ndarray
+            A numpy array that has the same data as this array.
+        """
+        return self.device.to_numpy(self._handle, self._shape, self._strides, self._offset)
 
     @property
     def shape(self) -> Tuple[int, ...]:
@@ -231,26 +265,118 @@ class NDArray:
     def __str__(self) -> str:
         return self.numpy().__str__()
 
-    def __add__(self, other: Union['NDArray', float]) -> 'NDArray':
+    def fill(self, val) -> 'NDArray':
+        return self.device.fill(self._handle, val)
+
+    ### Elementwise functions
+
+    def log(self):
         """
-        Performs element-wise addition between this array and `other`. If `other` is not an NDArray, it is treated as a scalar.
-
-        Parameters
-        ----------
-        other : NDArray or scalar
-            The other operand in the addition.
-
+        Computes the natural logarithm element-wise for the NDArray. 
+    
         Returns
         -------
         NDArray
-            The result of the addition.
-
-        Raises
-        ------
-        AssertionError
-            If `other` is an NDArray and does not have the same shape as this array.
+            A new NDArray with the natural logarithm applied element-wise. The shape of the returned array matches
+            the original NDArray.
         """
-        return self._ewise_or_scalar(other, ewise_fn=self.device.ewise_add, scalr_fn=self.device.scalar_add)
+        out = NDArray.make(self.shape, device=self.device)
+        self.device.ewise_log(self.compact()._handle, out._handle)
+        return out
+
+    def exp(self):
+        """
+        Computes the exponential function element-wise for the NDArray.
+    
+        Returns
+        -------
+        NDArray
+            A new NDArray with the exponential function applied element-wise. The shape of the returned array matches
+            the original NDArray.
+        """
+        
+        out = NDArray.make(self.shape, device=self.device)
+        self.device.ewise_exp(self.compact()._handle, out._handle)
+        return out
+
+    def tanh(self):
+        """
+        Computes the hyperbolic tangent element-wise for the NDArray.
+    
+        Returns
+        -------
+        NDArray
+            A new NDArray with the hyperbolic tangent applied element-wise. The shape of the returned array matches
+            the original NDArray.
+        """
+        
+        out = NDArray.make(self.shape, device=self.device)
+        self.device.ewise_tanh(self.compact()._handle, out._handle)
+        return out
+
+    def reshape(self, new_shape):
+        """
+        Reshape the matrix without copying memory.  This will return a matrix
+        that corresponds to a reshaped array but points to the same memory as
+        the original array.
+        Raises:
+            ValueError if product of current shape is not equal to the product
+            of the new shape, or if the matrix is not compact.
+        Args:
+            new_shape (tuple): new shape of the array
+        Returns:
+            NDArray : reshaped array; this will point to the same memory as the original NDArray.
+        """
+        
+        if prod(new_shape) != prod(self.shape) or not self.is_compact():
+            raise ValueError("Invalid reshape")
+        return self.as_strided(shape=new_shape, strides=NDArray.compact_strides(new_shape))
+
+    def permute(self, new_axes):
+        """
+        Permute order of the dimensions.  new_axes describes a permutation of the
+        existing axes, so e.g.:
+          - If we have an array with dimension "BHWC" then .permute((0,3,1,2))
+            would convert this to "BCHW" order.
+          - For a 2D array, .permute((1,0)) would transpose the array.
+        Like reshape, this operation should not copy memory, but achieves the
+        permuting by just adjusting the shape/strides of the array.  That is,
+        it returns a new array that has the dimensions permuted as desired, but
+        which points to the same memory as the original array.
+        Args:
+            new_axes (tuple): permutation order of the dimensions
+        Returns:
+            NDarray : new NDArray object with permuted dimensions, pointing
+            to the same memory as the original NDArray (i.e., just shape and
+            strides changed).
+        """
+        
+        new_shape = tuple(self.shape[i] for i in new_axes)
+        new_strides = tuple(self.strides[i] for i in new_axes)
+        return self.as_strided(shape=new_shape, strides=new_strides)
+
+    def broadcast_to(self, new_shape):
+        """
+        Broadcast an array to a new shape.  new_shape's elements must be the
+        same as the original shape, except for dimensions in the self where
+        the size = 1 (which can then be broadcast to any size).  As with the
+        previous calls, this will not copy memory, and just achieves
+        broadcasting by manipulating the strides.
+        Raises:
+            assertion error if new_shape[i] != shape[i] for all i where
+            shape[i] != 1
+        Args:
+            new_shape (tuple): shape to broadcast to
+        Returns:
+            NDArray: the new NDArray object with the new broadcast shape; should
+            point to the same memory as the original array.
+        """
+        
+        for old_shape_i, new_shape_i in zip(self.shape, new_shape):
+            if old_shape_i != 1:
+                assert new_shape_i == old_shape_i
+        new_strides = tuple(0 if old_shape_i == 1 else stride_i for old_shape_i, stride_i in zip(self.shape, self.strides))
+        return self.as_strided(shape=new_shape, strides=new_strides)
 
     def _ewise_or_scalar(self, other: Union['NDArray', float], ewise_fn: Callable, scalr_fn: Callable) -> 'NDArray':
         """
@@ -288,30 +414,236 @@ class NDArray:
         else:
             scalr_fn(self.compact()._handle, other, out._handle)
         return out
-            
-    def to(self, device: BackendDevice) -> 'NDArray':
+
+    def __add__(self, other: Union['NDArray', float]) -> 'NDArray':
         """
-        Transfers this array to the specified device.
+        Performs element-wise addition between this array and `other`. If `other` is not an NDArray, it is treated as a scalar.
 
         Parameters
         ----------
-        device : BackendDevice
-            The device to which this array should be transferred.
+        other : NDArray or scalar
+            The other operand in the addition.
 
         Returns
         -------
         NDArray
-            This array after it has been transferred to `device`.
-        """
-        return self if device == self.device else NDArray(self.numpy(), device=device)
-        
-    def numpy(self) -> np.ndarray:
-        """
-        Returns a numpy representation of this array.
+            The result of the addition.
 
+        Raises
+        ------
+        AssertionError
+            If `other` is an NDArray and does not have the same shape as this array.
+        """
+        return self._ewise_or_scalar(other, ewise_fn=self.device.ewise_add, scalr_fn=self.device.scalar_add)
+
+    def __sub__(self, other) -> 'NDArray':
+        """
+        Implements the subtract operation. This method performs element-wise subtraction between two NDArrays
+        or an NDArray and a scalar.
+    
+        Parameters
+        ----------
+        other : NDArray or scalar
+            The array or scalar to subtract from the current NDArray.
+    
         Returns
         -------
-        np.ndarray
-            A numpy array that has the same data as this array.
+        NDArray
+            The resultant NDArray after performing subtraction.
         """
-        return self.device.to_numpy(self._handle, self._shape, self._strides, self._offset)
+        return self + (-other)
+
+    def __rsub__(self, other) -> 'NDArray':
+        """
+        Implements the reverse subtract operation. This is used when the NDArray is on the right side of a subtraction.
+    
+        Parameters
+        ----------
+        other : scalar
+            The scalar to subtract the NDArray from.
+    
+        Returns
+        -------
+        NDArray
+            The resultant NDArray after performing subtraction.
+        """
+        
+        return (-self) + other
+
+    def __mul__(self, other) -> 'NDArray':
+        """
+        Implements the multiply operation. This method performs element-wise multiplication between two NDArrays
+        or an NDArray and a scalar.
+    
+        Parameters
+        ----------
+        other : NDArray or scalar
+            The array or scalar to multiply with the current NDArray.
+    
+        Returns
+        -------
+        NDArray
+            The resultant NDArray after performing multiplication.
+        """
+        return self._ewise_or_scalar(other, ewise_fn=self.device.ewise_mul, scalr_fn=self.device.scalar_mul)
+
+    def __truediv__(self,  other) -> 'NDArray':
+        """
+        Implements the true divide operation. This method performs element-wise division between two NDArrays
+        or an NDArray and a scalar.
+    
+        Parameters
+        ----------
+        other : NDArray or scalar
+            The array or scalar to divide the current NDArray by.
+    
+        Returns
+        -------
+        NDArray
+            The resultant NDArray after performing division.
+        """
+        return self._ewise_or_scalar(other, ewise_fn=self.device.ewise_div, scalr_fn=self.device.scalar_div)
+
+    def __neg__(self):
+        """
+        Implements the negation operation. This method performs element-wise negation for self(NDArray).
+
+        Parameters
+        ----------
+        self : NDArray
+            The array to negate.
+    
+        Returns
+        -------
+        NDArray
+            The resultant NDArray after performing negation.
+        """
+        
+        return self * (-1)
+
+    def __pow__(self, scalar) -> 'NDArray':
+        out = NDArray.make(self.shape, self.device)
+        self.device.scalr_power(self.compact()._handle, scalar, out._handle)
+        return out
+
+    __radd__ = __add__
+    __rmul__ = __mul__
+
+    def maximum(self, other):
+        return self.ewise_or_scalar(other, self.device.ewise_maximum, self.device.scalar_maximum)
+
+    def __eq__(self, other):
+        return self.ewise_or_scalar(other, self.device.ewise_eq, self.device.scalar_eq)
+
+    def __ge__(self, other):
+        return self.ewise_or_scalar(other, self.device.ewise_ge, self.device.scalar_ge)
+
+    def __ne__(self, other):
+        return 1 - (self == other)
+
+    def __gt__(self, other):
+        return (self >= other) * (self != other)
+
+    def __lt__(self, other):
+        return 1 - (self >= other)
+
+    def __le__(self, other):
+        return 1 - (self > other)
+        
+
+    def process_slice(self, sl, dim):
+        """ Convert a slice to an explicit start/stop/step """
+        start, stop, step = sl.start, sl.stop, sl.step
+        if start == None:
+            start = 0
+        if start < 0:
+            start = self.shape[dim]
+        if stop == None:
+            stop = self.shape[dim]
+        if stop < 0:
+            stop = self.shape[dim] + stop
+        if step == None:
+            step = 1
+
+        # we're not gonna handle negative strides and that kind of thing
+        assert stop > start, "Start must be less than stop"
+        assert step > 0, "No support for  negative increments"
+        return slice(start, stop, step)
+
+    def __getitem__(self, idxs):
+        """
+        Implements the get item operation to access elements or sub-arrays of our NDArray instance. 
+        This method supports slicing and integer-based access similar to NumPy. It returns a new NDArray
+        object that represents a view into the original array without copying memory.
+    
+        Raises
+        ------
+        AssertionError
+            If a slice has negative size or step, or if the number of slices is not equal to the number of dimensions.
+    
+        Parameters
+        ----------
+        idxs : tuple
+            A tuple of slice or integer elements corresponding to the subset of the matrix to get.
+    
+        Returns
+        -------
+        NDArray
+            A new NDArray object corresponding to the selected subset of elements. This should not copy memory but 
+            just manipulate the shape/strides/offset of the new array, referencing the same array as the original one.
+        """
+
+        # handle singleton as tuple, everything as slices
+        if not isinstance(idxs, tuple):
+            idxs = (idxs,)
+        idxs = tuple(
+            [
+                self.process_slice(s, i) if isinstance(s, slice) else slice(s, s + 1, 1)
+                for i, s in enumerate(idxs)
+            ]
+        )
+        assert len(idxs) == self.ndim, "Need indexes equal to number of dimensions"
+        shape = tuple((idx.stop - idx.start) // idx.step for idx in idxs)
+        offset = sum(idx.start * stride for idx, stride in zip(idxs, self.strides))
+        strides = tuple(idx.step * stride for idx, stride in zip(idxs, self.strides)) # Corrected line -> haha was FUN!!
+        return NDArray.make(shape, strides=strides, device=self.device, handle=self._handle, offset=offset)
+
+    def __setitem__(self, idxs, other):
+        """
+        Implements the set item operation to modify elements or sub-arrays of our NDArray instance. 
+        This method supports slicing and integer-based access similar to NumPy. It modifies the original NDArray
+        in place.
+        -> uses same semantics as __getitem__().
+    
+        Parameters
+        ----------
+        idxs : tuple
+            A tuple of slice or integer elements corresponding to the subset of the matrix to set.
+    
+        other : NDArray or scalar
+            The array or scalar value to set into the specified subset of the matrix. If `other` is an NDArray,
+            its shape should match the shape of the subset defined by `idxs`.
+    
+        Raises
+        ------
+        AssertionError
+            If `other` is an NDArray and its shape does not match the shape of the subset defined by `idxs`.
+        """
+        view = self.__getitem__(idxs)
+        if isinstance(other, NDArray):
+            assert prod(view.shape) == prod(other.shape)
+            self.device.ewise_setitem(
+                other.compact()._handle,
+                view._handle,
+                view.shape,
+                view.strides,
+                view._offset,
+            )
+        else:
+            self.device.scalar_setitem(
+                other,
+                view._handle,
+                view.shape,
+                view.strides,
+                view._offset,
+            )

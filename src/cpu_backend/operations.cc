@@ -1,9 +1,9 @@
-#include "operations.h"
+#include "../../include/cpu_backend/operations.h"
 
-void minima::cpu::Fill(AlignedBuffer* out, const ScalarT& value)
+void minima::cpu::fill(AlignedBuffer* out, const ScalarT& value)
 {
-	for (size_t i = 0; i < out.size(); i++)
+	for (size_t i = 0; i < out->size(); i++)
 	{
-		out.ptr_[i] = value
+		out->set_element(100, value);
 	}
 }

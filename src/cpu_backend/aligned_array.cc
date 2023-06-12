@@ -6,11 +6,11 @@ namespace cpu {
 AlignedBuffer::AlignedBuffer(const size_t& size) {
   int ret = posix_memalign(reinterpret_cast<void**>(&ptr_), kAlignment, size * kElemSize);
   if (ret != 0) throw std::bad_alloc();
-  size_ = size;
+  this->size_ = size;
 }
 
 AlignedBuffer::~AlignedBuffer() {
-  free(ptr_);
+  free(this->ptr_);
 }
 
 size_t AlignedBuffer::PtrAsInt() const {
@@ -25,6 +25,10 @@ std::ostream& operator<< (std::ostream& out, const AlignedBuffer& buffer) {
     }
     out << "]";
     return out;
+}
+
+AlignedBuffer::size() const {
+    return this->size_
 }
 
 }  // namespace cpu

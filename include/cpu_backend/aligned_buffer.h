@@ -11,6 +11,7 @@
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 
 
 namespace minima {
@@ -33,6 +34,7 @@ class AlignedBuffer {
   explicit AlignedBuffer(const size_t& size);
   ~AlignedBuffer();
   size_t PtrAsInt() const;
+  size_t size() const;
 
   friend std::ostream& operator<< (std::ostream& out, const AlignedBuffer& buffer);
 
@@ -41,6 +43,11 @@ class AlignedBuffer {
   ScalarT* ptr_;
   size_t size_;
 };
+
+void fill(AlignedBuffer* out, ScalarT value);
+void compact(const AlignedBuffer& a, AlignedBuffer& out, std::vector<uint16_t> shape, std::vector<uint16_t> strides, size_t offeset);
+
+
 
 }  // namespace cpu
 }  // namespace minima

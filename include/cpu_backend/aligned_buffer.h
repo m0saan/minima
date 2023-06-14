@@ -80,6 +80,8 @@ class AlignedBuffer {
    */
   ScalarT get_element(size_t index) const;
 
+  ScalarT* data() const;
+
   /**
    * @brief Overload the << operator for the AlignedBuffer.
    *

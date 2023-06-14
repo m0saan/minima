@@ -19,7 +19,7 @@ std::ostream& operator<<(std::ostream& os, const std::vector<int>& v) {
 // Path: src/main.cc
 int main() {
   minima::cpu::AlignedBuffer a(24);
-  minima::cpu::AlignedBuffer b(24);
+  minima::cpu::AlignedBuffer b(4);
   // std::cout << a << std::endl;
 
   // minima::cpu::fill(&a, 1.0);
@@ -36,7 +36,8 @@ int main() {
   // std::vector<int> shape = {2,3};
 
   // std::vector<int> indices(shape.size(), 0);  // All indices start at 0
-  minima::cpu::scalar_power(a, 2, &b);
+  // minima::cpu::scalar_power(a, 2, &b);
+  minima::cpu::reduce_sum(a, &b, 6);
 
   std::cout << b << std::endl;
 

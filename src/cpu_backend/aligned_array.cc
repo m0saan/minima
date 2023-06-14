@@ -48,5 +48,9 @@ ScalarT AlignedBuffer::get_element(size_t index) const {
   }
 }
 
+ScalarT* AlignedBuffer::data() const {
+  return buffer_;
+}
+
 }  // namespace cpu
 }  // namespace minima

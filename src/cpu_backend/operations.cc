@@ -207,3 +207,28 @@ void  minima::cpu::scalar_ge(const AlignedBuffer& a, ScalarT val, AlignedBuffer*
     checkSizeMatch(a, *out);
     scalarOperation(a, val, out, [](ScalarT x, ScalarT val) { return x >= val; });
 }
+
+template <typename ReduceOp>
+void Reduce(const minima::cpu::AlignedBuffer& a, minima::cpu::AlignedBuffer* out, size_t reduce_size, ReduceOp op) {
+    if (!out) {
+        throw std::invalid_argument("Output buffer is a nullptr.");
+    }
+
+    for(size_t i = 0; i < out->size(); ++i) {
+        const minima::cpu::ScalarT* start_ptr = a.data() + (i * reduce_size);
+        const minima::cpu::ScalarT* end_ptr = a.data() + ((i+1) * reduce_size);
+        out->set_element(i, op(start_ptr, end_ptr));
+    }
+}
+
+void minima::cpu::reduce_max(const AlignedBuffer& a, AlignedBuffer* out, size_t reduce_size) {
+    Reduce(a, out, reduce_size, [](const ScalarT* start, const ScalarT* end){
+        return *std::max_element(start, end);
+    });
+}
+
+void minima::cpu::reduce_sum(const AlignedBuffer& a, AlignedBuffer* out, size_t reduce_size) {
+    Reduce(a, out, reduce_size, [](const ScalarT* start, const ScalarT* end){
+        return std::accumulate(start, end, 0.0f);
+    });
+}

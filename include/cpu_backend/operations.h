@@ -24,9 +24,8 @@ void fill(AlignedBuffer *out, const ScalarT &value);
  * @param strides The stride for the compacting operation.
  * @param offset The offset for the compacting operation.
  */
-void compact(const AlignedBuffer &a, AlignedBuffer *out,
-             const std::vector<uint16_t> &shape,
-             const std::vector<uint16_t> &strides, size_t offset);
+void compact(const AlignedBuffer& a, AlignedBuffer* out, std::vector<uint32_t> shape,
+             std::vector<uint32_t> strides, size_t offset);
 
 /**
  * @brief Sets items in a non-compact array.
@@ -69,6 +68,120 @@ void ewise_add(const AlignedBuffer &a, const AlignedBuffer &b,
  * @param out Output buffer where results are written.
  */
 void scalar_add(const AlignedBuffer &a, ScalarT val, AlignedBuffer *out);
+
+
+
+/**
+ * @brief Element-wise multiplication of two buffers.
+ * @param a First input buffer.
+ * @param b Second input buffer.
+ * @param out Output buffer where results are written.
+ */
+void ewise_mul(const AlignedBuffer &a, const AlignedBuffer &b, AlignedBuffer *out);
+
+/**
+ * @brief Multiplies a scalar value with each element of a buffer.
+ * @param a Input buffer.
+ * @param val Scalar value to multiply.
+ * @param out Output buffer where results are written.
+ */
+void scalar_mul(const AlignedBuffer &a, ScalarT val, AlignedBuffer *out);
+
+/**
+ * @brief Element-wise division of two buffers.
+ * @param a First input buffer (numerator).
+ * @param b Second input buffer (denominator).
+ * @param out Output buffer where results are written.
+ */
+void ewise_div(const AlignedBuffer &a, const AlignedBuffer &b, AlignedBuffer *out);
+
+/**
+ * @brief Divides each element of a buffer by a scalar value.
+ * @param a Input buffer.
+ * @param val Scalar value for division.
+ * @param out Output buffer where results are written.
+ */
+void scalar_div(const AlignedBuffer &a, ScalarT val, AlignedBuffer *out);
+
+/**
+ * @brief Raises each element of a buffer to the power of a scalar value.
+ * @param a Input buffer.
+ * @param val Scalar value (exponent).
+ * @param out Output buffer where results are written.
+ */
+void scalar_power(const AlignedBuffer &a, ScalarT val, AlignedBuffer *out);
+
+
+/**
+ * @brief Applies the natural logarithm to each element of a buffer.
+ * @param a Input buffer.
+ * @param out Output buffer where results are written.
+ */
+void ewise_log(const AlignedBuffer& a, AlignedBuffer* out);
+
+/**
+ * @brief Applies the exponential function to each element of a buffer.
+ * @param a Input buffer.
+ * @param out Output buffer where results are written.
+ */
+void ewise_exp(const AlignedBuffer& a, AlignedBuffer* out);
+
+/**
+ * @brief Applies the hyperbolic tangent function to each element of a buffer.
+ * @param a Input buffer.
+ * @param out Output buffer where results are written.
+ */
+void ewise_tanh(const AlignedBuffer& a, AlignedBuffer* out);
+
+
+/**
+ * @brief Finds the maximum of each pair of elements from two buffers.
+ * @param a First input buffer.
+ * @param b Second input buffer.
+ * @param out Output buffer where results are written.
+ */
+void ewise_maximum(const AlignedBuffer& a, const AlignedBuffer& b, AlignedBuffer* out);
+
+/**
+ * @brief Finds the maximum of each element from a buffer and a scalar.
+ * @param a Input buffer.
+ * @param val Scalar value to compare.
+ * @param out Output buffer where results are written.
+ */
+void scalar_maximum(const AlignedBuffer& a, ScalarT val, AlignedBuffer* out);
+
+/**
+ * @brief Compares each pair of elements from two buffers for equality.
+ * @param a First input buffer.
+ * @param b Second input buffer.
+ * @param out Output buffer where results are written.
+ */
+void ewise_eq(const AlignedBuffer& a, const AlignedBuffer& b, AlignedBuffer* out);
+
+/**
+ * @brief Compares each element from a buffer and a scalar for equality.
+ * @param a Input buffer.
+ * @param val Scalar value to compare.
+ * @param out Output buffer where results are written.
+ */
+void scalar_eq(const AlignedBuffer& a, ScalarT val, AlignedBuffer* out);
+
+/**
+ * @brief Compares each pair of elements from two buffers for greater or equality.
+ * @param a First input buffer.
+ * @param b Second input buffer.
+ * @param out Output buffer where results are written.
+ */
+void ewise_ge(const AlignedBuffer& a, const AlignedBuffer& b, AlignedBuffer* out);
+
+/**
+ * @brief Compares each element from a buffer and a scalar for greater or equality.
+ * @param a Input buffer.
+ * @param val Scalar value to compare.
+ * @param out Output buffer where results are written.
+ */
+void scalar_ge(const AlignedBuffer& a, ScalarT val, AlignedBuffer* out);
+
 
 /**
  * @brief Multiplies two matrices using a naive three-loop algorithm.

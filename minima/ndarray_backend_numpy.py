@@ -9,12 +9,12 @@ __all__ = ['Array', 'to_numpy', 'from_numpy', 'fill', 'compact', 'ewise_setitem'
 # %% ../nbs/07_ndarray_backend_numpy.ipynb 2
 import numpy as np
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 3
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 7
 __device_name__ = "numpy"
 _datatype = np.float32
 _datetype_size = np.dtype(_datatype).itemsize
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 4
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 8
 class Array:
     def __init__(self, size):
         self.array = np.empty(size, dtype=np.float32)
@@ -26,7 +26,7 @@ class Array:
     def size(self):
         return self.array.size
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 6
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 10
 def to_numpy(a, shape, strides, offset):
     """
     Converts a contiguous 1D array into an N-dimensional array using numpy stride tricks.
@@ -64,7 +64,7 @@ def to_numpy(a, shape, strides, offset):
     )
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 10
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 14
 def from_numpy(a: np.ndarray, out) -> None:
     """
     Assigns a flattened version of the input N-dimensional array to another array.
@@ -100,7 +100,7 @@ def from_numpy(a: np.ndarray, out) -> None:
     out.array[:] = a.flatten()
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 16
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 20
 def fill(out: Array, val) -> None:
     """
     Fills an Array object with a specific value.
@@ -129,7 +129,7 @@ def fill(out: Array, val) -> None:
     out.array.fill(val)
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 18
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 22
 def compact(a, out: Array, shape, strides, offset):
     """
     Transforms a 1D array into an N-dimensional array, flattens it, and assigns it to an Array object.
@@ -168,7 +168,7 @@ def compact(a, out: Array, shape, strides, offset):
     
     out.array[:] = to_numpy(a, shape, strides, offset).flatten()
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 20
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 24
 def ewise_setitem(a: Array, out: Array, shape, strides, offset):
     """
     Modifies a section of an Array object to be equivalent to another reshaped array, on an element-wise basis.
@@ -209,7 +209,7 @@ def ewise_setitem(a: Array, out: Array, shape, strides, offset):
     
     to_numpy(out, shape, strides, offset)[:] = a.array.reshape(shape)
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 28
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 32
 def scalar_setitem(val, out: Array, shape, strides, offset):
     """
     Fills a section of an Array object with a specific scalar value.
@@ -249,7 +249,7 @@ def scalar_setitem(val, out: Array, shape, strides, offset):
     to_numpy(out, shape, strides, offset)[:] = val
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 30
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 34
 def ewise_add(a: Array, b: Array, out: Array):
     """
     Performs an element-wise addition of two Array objects and assigns the result to a third Array object.
@@ -282,7 +282,7 @@ def ewise_add(a: Array, b: Array, out: Array):
     out.array[:] = a.array + b.array
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 32
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 36
 def scalar_add(a: Array, val, out: Array):
     """
     Adds a scalar value to an Array object and assigns the result to another Array object.
@@ -315,7 +315,7 @@ def scalar_add(a: Array, val, out: Array):
     out.array[:] = a.array + val
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 34
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 38
 def ewise_mul(a: Array, b: Array, out: Array):
     """
     Performs an element-wise multiplication of two Array objects and assigns the result to a third Array object.
@@ -348,7 +348,7 @@ def ewise_mul(a: Array, b: Array, out: Array):
     out.array[:] = a.array * b.array
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 36
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 40
 def scalar_mul(a: Array, val, out: Array):
     """
     Multiplies an Array object by a scalar value and assigns the result to another Array object.
@@ -381,7 +381,7 @@ def scalar_mul(a: Array, val, out: Array):
     out.array[:] = a.array * val
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 38
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 42
 def ewise_div(a: Array, b: Array, out: Array):
     """
     Performs an element-wise division of two Array objects and assigns the result to a third Array object.
@@ -414,7 +414,7 @@ def ewise_div(a: Array, b: Array, out: Array):
     out.array[:] = a.array / b.array
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 40
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 44
 def scalar_div(a: Array, val, out: Array):
     """
     Divides an Array object by a scalar value and assigns the result to another Array object.
@@ -447,7 +447,7 @@ def scalar_div(a: Array, val, out: Array):
     out.array[:] = a.array / val
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 42
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 46
 def scalar_power(a: Array, val, out: Array):
     """
     Raises an Array object to the power of a scalar value and assigns the result to another Array object.
@@ -480,7 +480,7 @@ def scalar_power(a: Array, val, out: Array):
     out.array[:] = a.array ** val
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 44
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 48
 def ewise_maximum(a: Array, b: Array, out: Array):
     """
     Computes the element-wise maximum of two Array objects and assigns the result to a third Array object.
@@ -513,7 +513,7 @@ def ewise_maximum(a: Array, b: Array, out: Array):
     out.array[:] = np.maximum(a.array, b.array)
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 46
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 50
 def scalar_maximum(a: Array, val, out: Array):
     """
     Computes the maximum of an Array object and a scalar value, and assigns the result to another Array object.
@@ -545,7 +545,7 @@ def scalar_maximum(a: Array, val, out: Array):
     """
     out.array[:] = np.maximum(a.array, val)
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 48
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 52
 def ewise_eq(a: Array, b: Array, out: Array):
     """
     Performs an element-wise comparison for equality between two Array objects and assigns the result to a third Array object.
@@ -578,7 +578,7 @@ def ewise_eq(a: Array, b: Array, out: Array):
     out.array[:] = (a.array == b.array).astype(np.float32)
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 50
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 54
 def scalar_eq(a: Array, val, out: Array):
     """
     Compares an Array object with a scalar value for equality and assigns the result to another Array object.
@@ -611,7 +611,7 @@ def scalar_eq(a: Array, val, out: Array):
     out.array[:] = (a.array == val).astype(np.float32)
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 52
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 56
 def ewise_ge(a: Array, b: Array, out: Array):
     """
     Performs an element-wise comparison to check if elements of one Array object are greater than or equal to those of another Array object. The result is assigned to a third Array object.
@@ -644,7 +644,7 @@ def ewise_ge(a: Array, b: Array, out: Array):
     out.array[:] = (a.array >= b.array).astype(np.float32)
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 54
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 58
 def scalar_ge(a: Array, val, out: Array):
     """
     Compares an Array object with a scalar value to check if elements in the Array object are greater than or equal to the scalar. The result is assigned to another Array object.
@@ -677,7 +677,7 @@ def scalar_ge(a: Array, val, out: Array):
     out.array[:] = (a.array >= val).astype(np.float32)
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 56
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 60
 def ewise_log(a: Array, out: Array):
     """
     Computes the natural logarithm of each element in an Array object and assigns the result to another Array object.
@@ -708,7 +708,7 @@ def ewise_log(a: Array, out: Array):
     out.array[:] = np.log(a.array)
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 58
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 62
 def ewise_exp(a: Array, out: Array):
     """
     Computes the exponential of each element in an Array object and assigns the result to another Array object.
@@ -739,7 +739,7 @@ def ewise_exp(a: Array, out: Array):
     out.array[:] = np.exp(a.array)
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 64
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 68
 def ewise_tanh(a: Array, out: Array):
     """
     Computes the hyperbolic tangent of each element in an Array object and assigns the result to another Array object.
@@ -770,7 +770,7 @@ def ewise_tanh(a: Array, out: Array):
     out.array[:] = np.tanh(a.array)
 
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 69
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 73
 def reduce_max(a: Array, out: Array, reduce_size: int):
     """
     Computes the maximum of every `reduce_size` elements in an Array object and assigns the result to another Array object.
@@ -803,7 +803,7 @@ def reduce_max(a: Array, out: Array, reduce_size: int):
     """
     out.array[:] = a.array[:].reshape(-1, reduce_size).max(axis=1)
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 73
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 77
 def reduce_sum(a: Array, out: Array, reduce_size: int):
     """
     Computes the sum of every `reduce_size` elements in an Array object and assigns the result to another Array object.
@@ -836,7 +836,7 @@ def reduce_sum(a: Array, out: Array, reduce_size: int):
     """
     out.array[:] = a.array[:].reshape(-1, reduce_size).sum(axis=1)
 
-# %% ../nbs/07_ndarray_backend_numpy.ipynb 78
+# %% ../nbs/07_ndarray_backend_numpy.ipynb 82
 def matmul(a: Array, b: Array, out: Array, m: int, n: int, p: int):
     """
     Performs matrix multiplication between two Array objects and assigns the result to another Array object.

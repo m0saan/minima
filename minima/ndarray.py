@@ -328,10 +328,13 @@ class NDArray:
             NDArray : reshaped array; this will point to the same memory as the original NDArray.
         """
         
+        # TODO: support reshaping of non-compact arrays.
+        
         if prod(new_shape) != prod(self._shape):
             raise ValueError("Invalid reshape")
         strides = self._strides if not NDArray.compact_strides(new_shape) == self._strides else NDArray.compact_strides(new_shape)
         return self.as_strided(shape=new_shape, strides=strides)
+
 
     def permute(self, new_axes):
         """
@@ -698,4 +701,54 @@ class NDArray:
     def max(self, axis=None):
         """Finds the maximum value over the given axis, or over the entire array if no axis is provided."""
         return self.reduce('max', axis)
+
+    def __matmul__(self, other):
+        """Perform matrix multiplication of two arrays."""
+    
+        # Ensuring the arrays are 2D and have matching dimensions for multiplication
+        assert self.ndim == 2 and other.ndim == 2
+        assert self.shape[1] == other.shape[0]
+    
+        # Retrieve the dimensions of the two matrices
+        m, n, p = self.shape[0], self.shape[1], other.shape[1]
+    
+        def tile_matrix(matrix, tile_size):
+            """Function to tile a matrix based on a given tile size."""
+            return matrix.as_strided(
+                (matrix.shape[0] // tile_size, matrix.shape[1] // tile_size, tile_size, tile_size),
+                (matrix.shape[1] * tile_size, tile_size, self.shape[1], 1),
+            )
+    
+        if hasattr(self.device, "matmul_tiled") and all(
+            d % self.device.__tile_size__ == 0 for d in (m, n, p)
+        ):
+            # The device supports tiled multiplication and the dimensions of the matrices are divisible by the tile size
+    
+            # Determine the tile size
+            tile_size = self.device.__tile_size__
+    
+            # Tile the matrices
+            tiled_self = tile_matrix(self.compact(), tile_size).compact()
+            tiled_other = tile_matrix(other.compact(), tile_size).compact()
+    
+            # Create an output array for the result
+            output = NDArray.make((tiled_self.shape[0], tiled_other.shape[1], tile_size, tile_size), device=self.device)
+    
+            # Perform the tiled matrix multiplication
+            self.device.matmul_tiled(tiled_self._handle, tiled_other._handle, output._handle, m, n, p)
+    
+            # Rearrange and reshape the output to get the final result
+            return output.permute((0, 2, 1, 3)).compact().reshape((m, p))
+
+        else:
+            # The device does not support tiled multiplication or the dimensions of the matrices are not divisible by the tile size
+    
+            # Create an output array for the result
+            output = NDArray.make((m, p), device=self.device)
+    
+            # Perform regular matrix multiplication
+            self.device.matmul(self.compact()._handle, other.compact()._handle, output._handle, m, n, p)
+    
+            return output
+
 

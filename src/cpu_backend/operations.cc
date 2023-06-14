@@ -5,7 +5,7 @@
 
 void minima::cpu::fill(AlignedBuffer *out, const ScalarT &value) {
   for (size_t i = 0; i < out->size(); i++) {
-    out->set_element(100, value);
+    out->set_element(i, value);
   }
 }
 

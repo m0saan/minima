@@ -23,7 +23,7 @@ class BackendDevice:
         return self.name == other.name
 
     def __repr__(self):
-        return f"device(type='{self.name}')"
+        return f"(type='{self.name}')"
 
     def __getattr__(self, name):
         return getattr(self.mod, name)
@@ -112,12 +112,12 @@ class NDArray:
         """
         
         if isinstance(value, NDArray): # copy of existing NDArray
-            if device is None: device = value.device
+            if device is None: device = value._device
             self._init(value.to(device) + 0.0)
         elif isinstance(value, np.ndarray): # copy of existing np array
             device = device if device is not None else default_device()
             array = self.make(value.shape, device=device)
-            array.device.from_numpy(np.ascontiguousarray(value), array._handle)
+            array._device.from_numpy(np.ascontiguousarray(value), array._handle)
             self._init(array)
         else:
             array = NDArray(np.array(value), device=device)
@@ -173,7 +173,7 @@ class NDArray:
         array._strides = NDArray.compact_strides(shape) if strides is None else strides
         array._device = default_device() if device is None else device
         array._offset = offset
-        array._handle = array.device.Array(prod(shape)) if handle is None else handle
+        array._handle = array._device.Array(prod(shape)) if handle is None else handle
         return array
 
     @staticmethod
@@ -182,7 +182,7 @@ class NDArray:
         return tuple(res[::-1])
 
     def _is_compact(self) -> bool:
-        return self.strides == self.compact_strides(self.shape) and prod(self.shape) == self._handle.size
+        return self._strides == self.compact_strides(self._shape) and prod(self._shape) == self._handle.size
 
     def compact(self) -> 'NDArray':
         """
@@ -195,8 +195,8 @@ class NDArray:
         """
         if self._is_compact():
             return self
-        out = NDArray.make(shape=self.shape, device=self.device)
-        self.device.compact(self._handle, out._handle, self.shape, self.strides, self.offset)
+        out = NDArray.make(shape=self._shape, device=self._device)
+        self._device.compact(self._handle, out._handle, self._shape, self._strides, self._offset)
         return out
         
     def as_strided(self, shape, strides) -> 'NDArray':
@@ -220,7 +220,7 @@ class NDArray:
         NDArray
             This array after it has been transferred to `device`.
         """
-        return self if device == self.device else NDArray(self.numpy(), device=device)
+        return self if device == self._device else NDArray(self.numpy(), device=device)
         
     def numpy(self) -> np.ndarray:
         """
@@ -231,7 +231,7 @@ class NDArray:
         np.ndarray
             A numpy array that has the same data as this array.
         """
-        return self.device.to_numpy(self._handle, self._shape, self._strides, self._offset)
+        return self._device.to_numpy(self._handle, self._shape, self._strides, self._offset)
 
     @property
     def shape(self) -> Tuple[int, ...]:
@@ -260,13 +260,13 @@ class NDArray:
         return prod(self._shape)
 
     def __repr__(self) -> str:
-        return "NDArray(" + self.numpy().__str__() + f", device={self.device})"
+        return "NDArray(" + self.numpy().__str__() + f", device={self._device})"
 
     def __str__(self) -> str:
         return self.numpy().__str__()
 
     def fill(self, val) -> 'NDArray':
-        return self.device.fill(self._handle, val)
+        return self._device.fill(self._handle, val)
 
     ### Elementwise functions
 
@@ -280,8 +280,8 @@ class NDArray:
             A new NDArray with the natural logarithm applied element-wise. The shape of the returned array matches
             the original NDArray.
         """
-        out = NDArray.make(self.shape, device=self.device)
-        self.device.ewise_log(self.compact()._handle, out._handle)
+        out = NDArray.make(self._shape, device=self._device)
+        self._device.ewise_log(self.compact()._handle, out._handle)
         return out
 
     def exp(self):
@@ -295,8 +295,8 @@ class NDArray:
             the original NDArray.
         """
         
-        out = NDArray.make(self.shape, device=self.device)
-        self.device.ewise_exp(self.compact()._handle, out._handle)
+        out = NDArray.make(self._shape, device=self._device)
+        self._device.ewise_exp(self.compact()._handle, out._handle)
         return out
 
     def tanh(self):
@@ -310,8 +310,8 @@ class NDArray:
             the original NDArray.
         """
         
-        out = NDArray.make(self.shape, device=self.device)
-        self.device.ewise_tanh(self.compact()._handle, out._handle)
+        out = NDArray.make(self._shape, device=self._device)
+        self._device.ewise_tanh(self.compact()._handle, out._handle)
         return out
 
     def reshape(self, new_shape):
@@ -328,9 +328,10 @@ class NDArray:
             NDArray : reshaped array; this will point to the same memory as the original NDArray.
         """
         
-        if prod(new_shape) != prod(self.shape) or not self.is_compact():
+        if prod(new_shape) != prod(self._shape):
             raise ValueError("Invalid reshape")
-        return self.as_strided(shape=new_shape, strides=NDArray.compact_strides(new_shape))
+        strides = self._strides if not NDArray.compact_strides(new_shape) == self._strides else NDArray.compact_strides(new_shape)
+        return self.as_strided(shape=new_shape, strides=strides)
 
     def permute(self, new_axes):
         """
@@ -351,8 +352,8 @@ class NDArray:
             strides changed).
         """
         
-        new_shape = tuple(self.shape[i] for i in new_axes)
-        new_strides = tuple(self.strides[i] for i in new_axes)
+        new_shape = tuple(self._shape[i] for i in new_axes)
+        new_strides = tuple(self._strides[i] for i in new_axes)
         return self.as_strided(shape=new_shape, strides=new_strides)
 
     def broadcast_to(self, new_shape):
@@ -372,10 +373,10 @@ class NDArray:
             point to the same memory as the original array.
         """
         
-        for old_shape_i, new_shape_i in zip(self.shape, new_shape):
+        for old_shape_i, new_shape_i in zip(self._shape, new_shape):
             if old_shape_i != 1:
                 assert new_shape_i == old_shape_i
-        new_strides = tuple(0 if old_shape_i == 1 else stride_i for old_shape_i, stride_i in zip(self.shape, self.strides))
+        new_strides = tuple(0 if old_shape_i == 1 else stride_i for old_shape_i, stride_i in zip(self._shape, self._strides))
         return self.as_strided(shape=new_shape, strides=new_strides)
 
     def _ewise_or_scalar(self, other: Union['NDArray', float], ewise_fn: Callable, scalr_fn: Callable) -> 'NDArray':
@@ -407,9 +408,9 @@ class NDArray:
         AssertionError
             If `other` is an `NDArray` but does not have the same shape as `self`.
         """
-        out = NDArray.make(shape=self.shape, device=self.device)
+        out = NDArray.make(shape=self._shape, device=self._device)
         if isinstance(other, NDArray):
-            assert self.shape == other.shape, f'operands could not be added together with shapes {self.shape} {other.shape}'
+            assert self._shape == other._shape, f'operands could not be added together with shapes {self._shape} {other._shape}'
             ewise_fn(self.compact()._handle, other.compact()._handle, out._handle)
         else:
             scalr_fn(self.compact()._handle, other, out._handle)
@@ -434,7 +435,7 @@ class NDArray:
         AssertionError
             If `other` is an NDArray and does not have the same shape as this array.
         """
-        return self._ewise_or_scalar(other, ewise_fn=self.device.ewise_add, scalr_fn=self.device.scalar_add)
+        return self._ewise_or_scalar(other, ewise_fn=self._device.ewise_add, scalr_fn=self._device.scalar_add)
 
     def __sub__(self, other) -> 'NDArray':
         """
@@ -485,7 +486,7 @@ class NDArray:
         NDArray
             The resultant NDArray after performing multiplication.
         """
-        return self._ewise_or_scalar(other, ewise_fn=self.device.ewise_mul, scalr_fn=self.device.scalar_mul)
+        return self._ewise_or_scalar(other, ewise_fn=self._device.ewise_mul, scalr_fn=self._device.scalar_mul)
 
     def __truediv__(self,  other) -> 'NDArray':
         """
@@ -502,7 +503,7 @@ class NDArray:
         NDArray
             The resultant NDArray after performing division.
         """
-        return self._ewise_or_scalar(other, ewise_fn=self.device.ewise_div, scalr_fn=self.device.scalar_div)
+        return self._ewise_or_scalar(other, ewise_fn=self._device.ewise_div, scalr_fn=self._device.scalar_div)
 
     def __neg__(self):
         """
@@ -522,21 +523,21 @@ class NDArray:
         return self * (-1)
 
     def __pow__(self, scalar) -> 'NDArray':
-        out = NDArray.make(self.shape, self.device)
-        self.device.scalr_power(self.compact()._handle, scalar, out._handle)
+        out = NDArray.make(self._shape, self._device)
+        self._device.scalr_power(self.compact()._handle, scalar, out._handle)
         return out
 
     __radd__ = __add__
     __rmul__ = __mul__
 
     def maximum(self, other):
-        return self.ewise_or_scalar(other, self.device.ewise_maximum, self.device.scalar_maximum)
+        return self.ewise_or_scalar(other, self._device.ewise_maximum, self._device.scalar_maximum)
 
     def __eq__(self, other):
-        return self.ewise_or_scalar(other, self.device.ewise_eq, self.device.scalar_eq)
+        return self.ewise_or_scalar(other, self._device.ewise_eq, self._device.scalar_eq)
 
     def __ge__(self, other):
-        return self.ewise_or_scalar(other, self.device.ewise_ge, self.device.scalar_ge)
+        return self.ewise_or_scalar(other, self._device.ewise_ge, self._device.scalar_ge)
 
     def __ne__(self, other):
         return 1 - (self == other)
@@ -557,11 +558,11 @@ class NDArray:
         if start == None:
             start = 0
         if start < 0:
-            start = self.shape[dim]
+            start = self._shape[dim]
         if stop == None:
-            stop = self.shape[dim]
+            stop = self._shape[dim]
         if stop < 0:
-            stop = self.shape[dim] + stop
+            stop = self._shape[dim] + stop
         if step == None:
             step = 1
 
@@ -604,9 +605,9 @@ class NDArray:
         )
         assert len(idxs) == self.ndim, "Need indexes equal to number of dimensions"
         shape = tuple((idx.stop - idx.start) // idx.step for idx in idxs)
-        offset = sum(idx.start * stride for idx, stride in zip(idxs, self.strides))
-        strides = tuple(idx.step * stride for idx, stride in zip(idxs, self.strides)) # Corrected line -> haha was FUN!!
-        return NDArray.make(shape, strides=strides, device=self.device, handle=self._handle, offset=offset)
+        offset = sum(idx.start * stride for idx, stride in zip(idxs, self._strides))
+        strides = tuple(idx.step * stride for idx, stride in zip(idxs, self._strides)) # Corrected line -> haha was FUN!!
+        return NDArray.make(shape, strides=strides, device=self._device, handle=self._handle, offset=offset)
 
     def __setitem__(self, idxs, other):
         """
@@ -631,19 +632,70 @@ class NDArray:
         """
         view = self.__getitem__(idxs)
         if isinstance(other, NDArray):
-            assert prod(view.shape) == prod(other.shape)
-            self.device.ewise_setitem(
+            assert prod(view._shape) == prod(other._shape)
+            self._device.ewise_setitem(
                 other.compact()._handle,
                 view._handle,
-                view.shape,
-                view.strides,
+                view._shape,
+                view._strides,
                 view._offset,
             )
         else:
-            self.device.scalar_setitem(
+            self._device.scalar_setitem(
                 other,
                 view._handle,
-                view.shape,
-                view.strides,
+                view._shape,
+                view._strides,
                 view._offset,
             )
+
+    def reduce_view_out(self, axis):
+        """
+        Prepares and returns a view of the array and an output array, set up 
+        for performing reduction functions.
+        """
+        if axis is None:
+            # Reshape the array into 1D if we're reducing over all axes.
+            new_shape = (1,) * (self.ndim - 1) + (prod(self._shape),)
+            view = self.reshape(new_shape)
+    
+            # Prepare an output array with one element for each dimension.
+            output_shape = (1,) * self.ndim
+            out = NDArray.make(output_shape, device=self._device)
+        else:
+            # If we're reducing over a specific axis, bring that axis to the end.
+            permute_order = tuple(a for a in range(self.ndim) if a != axis) + (axis,)
+            view = self.permute(permute_order)
+    
+            # Prepare an output array with the same shape as the original, 
+            # but with 1 in place of the reduction axis.
+            output_shape = tuple(1 if i == axis else s for i, s in enumerate(self._shape))
+            out = NDArray.make(output_shape, device=self._device)
+        return view, out
+
+    def reduce(self, operation, axis=None):
+        """
+        Performs a reduction operation ('sum' or 'max') over the given axis, 
+        or over the entire array if no axis is provided.
+        """
+        # Prepare the view and output array.
+        view, out = self.reduce_view_out(axis)
+        
+        # Perform the operation.
+        if operation == 'sum':
+            self._device.reduce_sum(view.compact()._handle, out._handle, view._shape[-1])
+        elif operation == 'max':
+            self._device.reduce_max(view.compact()._handle, out._handle, view._shape[-1])
+        else:
+            raise ValueError(f"Unknown operation: {operation}")
+    
+        return out
+    
+    def sum(self, axis=None):
+        """Performs a sum operation over the given axis, or over the entire array if no axis is provided."""
+        return self.reduce('sum', axis)
+    
+    def max(self, axis=None):
+        """Finds the maximum value over the given axis, or over the entire array if no axis is provided."""
+        return self.reduce('max', axis)
+

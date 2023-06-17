@@ -124,3 +124,7 @@ venv.bak/
 # Mac stuff
 .DS_Store
 _docs/
+cmake-build-debug/
+todo
+tests/
+draft.ipynb

@@ -1,5 +1,4 @@
 #include "../../include/cpu_backend/aligned_buffer.h"
-#include <cstddef>
 
 namespace minima {
 namespace cpu {

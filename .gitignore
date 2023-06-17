@@ -128,3 +128,5 @@ cmake-build-debug/
 todo
 tests/
 draft.ipynb
+src/a.out
+src/a.out.dSYM/

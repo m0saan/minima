@@ -24,8 +24,8 @@ void fill(AlignedBuffer *out, const ScalarT &value);
  * @param strides The stride for the compacting operation.
  * @param offset The offset for the compacting operation.
  */
-void compact(const AlignedBuffer& a, AlignedBuffer* out, std::vector<uint32_t> shape,
-             std::vector<uint32_t> strides, size_t offset);
+void compact(const AlignedBuffer& a, AlignedBuffer* out, const std::vector<uint32_t>& shape,
+             const std::vector<uint32_t>& strides, size_t offset);
 
 /**
  * @brief Sets items in a non-compact array.
@@ -36,7 +36,7 @@ void compact(const AlignedBuffer& a, AlignedBuffer* out, std::vector<uint32_t> s
  * @param offset Offset of the out array.
  */
 void ewise_setitem(const AlignedBuffer &a, AlignedBuffer *out,
-                   std::vector<uint32_t> shape, std::vector<uint32_t> strides,
+                   const std::vector<uint32_t>& shape, const std::vector<uint32_t>& strides,
                    size_t offset);
 
 /**
@@ -49,7 +49,7 @@ void ewise_setitem(const AlignedBuffer &a, AlignedBuffer *out,
  * @param offset Offset of the out array.
  */
 void scalar_setitem(const size_t size, ScalarT val, AlignedBuffer *out,
-                    std::vector<uint32_t> shape, std::vector<uint32_t> strides,
+                    const std::vector<uint32_t>& shape, const std::vector<uint32_t>& strides,
                     size_t offset);
 
 /**

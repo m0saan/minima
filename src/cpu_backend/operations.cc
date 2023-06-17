@@ -1,5 +1,4 @@
 #include "../../include/cpu_backend/operations.h"
-#include <cstddef>
 #include <numeric>
 #include <vector>
 
@@ -20,7 +19,7 @@ size_t calculate_index(const std::vector<uint32_t> &indices,
 void increment_indices(std::vector<uint32_t>& indices, 
                        const std::vector<uint32_t>& shape) {
     // Start from the last dimension
-    for (int dim = shape.size() - 1; dim >= 0; --dim) {
+    for (size_t dim = shape.size() - 1; dim >= 0; --dim) {
         // If the index in this dimension is less than its maximum
         // (shape[dim] - 1), it means we can still increment the index
         // in this dimension
@@ -36,8 +35,8 @@ void increment_indices(std::vector<uint32_t>& indices,
 }
 
 
-void minima::cpu::compact(const AlignedBuffer& a, AlignedBuffer* out, std::vector<uint32_t> shape,
-             std::vector<uint32_t> strides, size_t offset) {
+void minima::cpu::compact(const AlignedBuffer& a, AlignedBuffer* out, const std::vector<uint32_t>& shape,
+             const std::vector<uint32_t>& strides, size_t offset) {
     std::vector<uint32_t> indices(shape.size(), 0); 
 
     for (size_t i = 0; i < out->size(); ++i) {
@@ -47,8 +46,8 @@ void minima::cpu::compact(const AlignedBuffer& a, AlignedBuffer* out, std::vecto
     } 
 }
 
-void minima::cpu::ewise_setitem(const AlignedBuffer& a, AlignedBuffer* out, std::vector<uint32_t> shape,
-                  std::vector<uint32_t> strides, size_t offset) {
+void minima::cpu::ewise_setitem(const AlignedBuffer& a, AlignedBuffer* out, const std::vector<uint32_t>& shape,
+                  const std::vector<uint32_t>& strides, size_t offset) {
 
    std::vector<uint32_t> indices(shape.size(), 0);
 
@@ -59,8 +58,8 @@ void minima::cpu::ewise_setitem(const AlignedBuffer& a, AlignedBuffer* out, std:
     }
 }
 
-void minima::cpu::scalar_setitem(const size_t size, ScalarT val, AlignedBuffer* out, std::vector<uint32_t> shape,
-                   std::vector<uint32_t> strides, size_t offset) {
+void minima::cpu::scalar_setitem(const size_t size, ScalarT val, AlignedBuffer* out, const std::vector<uint32_t>& shape,
+                   const std::vector<uint32_t>& strides, size_t offset) {
     std::vector<uint32_t> indices(shape.size(), 0);
 
     for (size_t i = 0; i < size; ++i) {
@@ -124,7 +123,7 @@ void minima::cpu::scalar_add(const AlignedBuffer& a, ScalarT val, AlignedBuffer*
 void minima::cpu::ewise_mul(const AlignedBuffer& a, const AlignedBuffer& b, AlignedBuffer* out) {
     checkNullPointers(&a, nullptr, out);
     checkSizeMatch(a, *out); 
-   eWiseOperation(a, b, out, std::multiplies<ScalarT>());
+   eWiseOperation(a, b, out, std::multiplies<>());
 }
 
 void minima::cpu::scalar_mul(const AlignedBuffer& a, ScalarT val, AlignedBuffer* out) {

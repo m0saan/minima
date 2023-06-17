@@ -95,7 +95,7 @@ class AlignedBuffer {
  private:
 
   /// @brief The buffer.
-  ScalarT* buffer_;
+  ScalarT* buffer_{};
 
   /// @brief The size of the buffer.
   size_t size_;

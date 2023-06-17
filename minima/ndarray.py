@@ -607,7 +607,13 @@ class NDArray:
             ]
         )
         assert len(idxs) == self.ndim, "Need indexes equal to number of dimensions"
-        shape = tuple((idx.stop - idx.start) // idx.step for idx in idxs)
+        
+        shape = []
+        for i in idxs:
+            d = i.stop - i.start
+            dim_size = d // i.step + d % i.step
+            shape.append(dim_size)
+            
         offset = sum(idx.start * stride for idx, stride in zip(idxs, self._strides))
         strides = tuple(idx.step * stride for idx, stride in zip(idxs, self._strides)) # Corrected line -> haha was FUN!!
         return NDArray.make(shape, strides=strides, device=self._device, handle=self._handle, offset=offset)

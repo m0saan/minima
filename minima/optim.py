@@ -145,7 +145,7 @@ class AdaGrad(Optimizer):
     def __init__(
         self,
         params,  # The parameters of the model to be optimized.
-        lr=0.01,  # The initial learning rate.
+        lr=0.001,  # The initial learning rate.
         wd=0.0,  # The weight decay (L2 regularization).
         eps=1e-7,  # A small constant for numerical stability.
     ):
@@ -289,7 +289,7 @@ class Adam(Optimizer):
     def __init__(
         self,
         params, # `params` is the list of parameters
-        lr=0.01, # `lr` is the learning rate $\alpha$
+        lr=1e-5, # `lr` is the learning rate $\alpha$
         beta1=0.9, # The exponential decay rate for the first moment estimates. Default is 0.9.
         beta2=0.999, # The exponential decay rate for the second moment estimates. Default is 0.999.
         eps=1e-8, # `eps` is $\hat{\epsilon}$ or $\epsilon$ based on `optimized_update`

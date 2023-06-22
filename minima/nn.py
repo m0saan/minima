@@ -239,7 +239,7 @@ class Module:
         # return self.grad_output
 
 
-# %% ../nbs/03_nn.ipynb 7
+# %% ../nbs/03_nn.ipynb 8
 class Sequential(Module):
     """
     A sequential container in Minima.
@@ -287,8 +287,18 @@ class Sequential(Module):
             x = module(x)
         return x
 
+    def __iter__(self):
+        self._iter_idx = 0;
+        return self
+    def __next__(self):
+        if self._iter_idx < len(self.modules):
+            res = self.modules[self._iter_idx]
+            self._iter_idx += 1
+            return res
+        raise StopIteration()
 
-# %% ../nbs/03_nn.ipynb 8
+
+# %% ../nbs/03_nn.ipynb 9
 class Linear(Module):
     """
     A class representing a fully connected (linear) layer in a neural network.
@@ -357,7 +367,7 @@ class Linear(Module):
         out = out + self.bias.broadcast_to(out.shape) if self.bias else out
         return out
 
-# %% ../nbs/03_nn.ipynb 13
+# %% ../nbs/03_nn.ipynb 14
 class Flatten(Module):
     """
     A `Flatten` module in Minima.
@@ -383,12 +393,12 @@ class Flatten(Module):
         return X.reshape((X.shape[0], -1))
 
 
-# %% ../nbs/03_nn.ipynb 14
+# %% ../nbs/03_nn.ipynb 15
 class ReLU(Module):
     def forward(self, x: Tensor) -> Tensor:
         return operators.relu(x)
 
-# %% ../nbs/03_nn.ipynb 24
+# %% ../nbs/03_nn.ipynb 25
 class CrossEntropyLoss(Module):
     """
     Cross-entropy loss module in Minima.
@@ -423,11 +433,11 @@ class CrossEntropyLoss(Module):
         Returns:
             Tensor: A single tensor that is the average cross-entropy loss.
         """
-        log_sum_exp_logits = ops.logsumexp(input, axes=(1, )).sum()
+        log_sum_exp_logits = operators.logsumexp(input, axes=(1, )).sum()
         true_class_logits_sum = (input * init.one_hot(input.shape[1], target)).sum()
         return (log_sum_exp_logits - true_class_logits_sum) / input.shape[0]
 
-# %% ../nbs/03_nn.ipynb 25
+# %% ../nbs/03_nn.ipynb 26
 class Softmax(Module):
     """
     Cross-entropy loss module in Minima.
@@ -451,7 +461,7 @@ class Softmax(Module):
     ```
     """
 
-    def forward(self, input: Tensor, target: Tensor) -> Tensor:
+    def forward(self, input: Tensor) -> Tensor:
         """
         Computes the Cross Entropy Loss between the input logits and the target class indices.
 
@@ -464,10 +474,10 @@ class Softmax(Module):
         """
 
 
-        exps = ops.exp(X - mi.autograd.ARRAY_API.max(input))
-        return exps / ops.summation(exps)
+        exps = operators.exp(input - mi.autograd.ARRAY_API.max(input))
+        return exps / operators.summation(exps)
 
-# %% ../nbs/03_nn.ipynb 34
+# %% ../nbs/03_nn.ipynb 35
 class LayerNorm1d(Module):
     """
     1D Layer normalization module in Minima.
@@ -526,7 +536,7 @@ class LayerNorm1d(Module):
         return self.weight.broadcast_to(x.shape) * x_normed + self.bias.broadcast_to(x.shape)
 
 
-# %% ../nbs/03_nn.ipynb 37
+# %% ../nbs/03_nn.ipynb 38
 class BatchNorm1d(Module):
     """
     1D Batch normalization module in Minima.
@@ -631,7 +641,7 @@ class BatchNorm1d(Module):
         x_normed = (x - mean.broadcast_to(x.shape)) / (std.broadcast_to(x.shape) + self.eps) ** .5
         return self.weight.broadcast_to(x.shape) * x_normed + self.bias.broadcast_to(x.shape)
 
-# %% ../nbs/03_nn.ipynb 38
+# %% ../nbs/03_nn.ipynb 39
 class Dropout(Module):
     """
     Dropout Layer for a Neural Network.
@@ -684,7 +694,7 @@ class Dropout(Module):
         return x
 
 
-# %% ../nbs/03_nn.ipynb 39
+# %% ../nbs/03_nn.ipynb 40
 class Residual(Module):
     """
     Residual Layer for a Neural Network.
@@ -729,7 +739,7 @@ class Residual(Module):
         """
         return x + self.fn(x)
 
-# %% ../nbs/03_nn.ipynb 40
+# %% ../nbs/03_nn.ipynb 41
 class Identity(Module):
     def forward(self, x):
         return x

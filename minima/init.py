@@ -7,6 +7,7 @@ __all__ = ['rand', 'randn', 'constant', 'ones', 'zeros', 'randb', 'one_hot', 'xa
 # %% ../nbs/02_init.ipynb 2
 import math
 import minima as mi
+from functools import partial
 
 # %% ../nbs/02_init.ipynb 4
 def rand(

@@ -520,7 +520,7 @@ class ReLU(TensorOp):
         Returns:
         The result of applying ReLU to a.
         """
-        self.out = ARRAY_API.clip(a, a_min=0)
+        self.out = ARRAY_API.clip(a, a_min=0, a_max=None)
         return self.out
 
     def gradient(self, out_grad: Tensor, node: Tensor) -> Tuple[Tensor,]:

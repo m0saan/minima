@@ -603,11 +603,11 @@ class Tensor(Value):
         Tensor([1, 2, 3])
         """
         tensor = Tensor.__new__(Tensor)
-        return tensor._init(None,
-                            set(),
-                            data=data if not isinstance(data, Tensor) else data.compute_cached_data(),
-                            requires_grad=requires_grad
-                           )
+        tensor._init(None,
+                     set(),
+                     data=data if not isinstance(data, Tensor) else data.compute_cached_data(),
+                     requires_grad=requires_grad)
+        return tensor
         
         
     def detach(self) -> 'Tensor':
@@ -627,7 +627,6 @@ class Tensor(Value):
 
     @property
     def T(self) -> 'Tensor':
-        print(self.shape)
         return mi.operators.transpose(self, self.shape)
     
     def numpy(self):
@@ -678,7 +677,6 @@ class Tensor(Value):
         >>> print(t.data)
         Tensor([4, 5, 6])
         """
-        print(type(value), type(Tensor))
         assert isinstance(value, Tensor)
         assert value.dtype == self.dtype, "The dtype of the given tensor (%s) is not the same as the dtype of the current tensor (%s)." % (
             value.dtype,

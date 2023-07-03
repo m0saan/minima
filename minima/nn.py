@@ -438,8 +438,8 @@ class CrossEntropyLoss(Module):
         Returns:
             Tensor: A single tensor that is the average cross-entropy loss.
         """
-        log_sum_exp_logits = operators.logsumexp(input, axes=(1, )).sum()
-        true_class_logits_sum = (input * init.one_hot(input.shape[1], target)).sum()
+        log_sum_exp_logits = operators.summation(operators.logsumexp(input, axes=(1, )))
+        true_class_logits_sum = operators.summation(input * init.one_hot(input.shape[1], target))
         return (log_sum_exp_logits - true_class_logits_sum) / input.shape[0]
 
 # %% ../nbs/03_nn.ipynb 27

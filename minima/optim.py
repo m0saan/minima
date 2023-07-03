@@ -108,9 +108,13 @@ class SGD(Optimizer):
 
         If momentum is set, it applies momentum by using a running average of the previous gradients.
         """
+        # import pdb; pdb.set_trace()
+        # TODO: there is a bug (somewhere :3) -> The dtype of the given the grad tensor is (float64) is not the same as the dtype of the current tensor (float32). 
+        # will do a temp fix for now : Xd
+        grad = Tensor(p.grad, dtype='float32')
         if self.idx not in self.u:
             self.u[self.idx] = init.zeros(*p.shape)
-        self.u[self.idx] = self.momentum * self.u[self.idx] + (1 - self.momentum) * p.grad.data
+        self.u[self.idx] = self.momentum * self.u[self.idx] + (1 - self.momentum) * grad
         p.data = p.data - self.lr * self.u[self.idx]
 
     def _reg_step(self, p):
@@ -122,7 +126,7 @@ class SGD(Optimizer):
         if self.wd != 0:
             p.data *= (1 - self.lr * self.wd)
 
-# %% ../nbs/04_optim.ipynb 10
+# %% ../nbs/04_optim.ipynb 14
 class AdaGrad(Optimizer):
     """
     Implements AdaGrad optimization algorithm.
@@ -186,7 +190,7 @@ class AdaGrad(Optimizer):
         if self.wd != 0:
             p.data *= (1 - self.lr * self.wd)
 
-# %% ../nbs/04_optim.ipynb 13
+# %% ../nbs/04_optim.ipynb 17
 class RMSProp(Optimizer):
     """
     Implements RMSProp optimization algorithm.
@@ -253,7 +257,7 @@ class RMSProp(Optimizer):
         if self.wd != 0:
             p.data *= (1 - self.lr * self.wd)
 
-# %% ../nbs/04_optim.ipynb 16
+# %% ../nbs/04_optim.ipynb 20
 class Adam(Optimizer):
     """
     Implements the Adam optimization algorithm.

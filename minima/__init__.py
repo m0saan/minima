@@ -8,3 +8,4 @@ from .ndarray import *
 from . import nn
 from . import init
 from . import optim
+from . import data

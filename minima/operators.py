@@ -535,7 +535,7 @@ class ReLU(TensorOp):
         The gradients with respect to the inputs.
         """
         a = node.children[0].compute_cached_data()
-        return out_grad * Tensor(a > 0)
+        return (out_grad * Tensor(a > 0), )
 
 def relu(a: Tensor) -> Tensor:
     """
@@ -754,7 +754,7 @@ class Reshape(TensorOp):
             Tuple[Tensor, ...]: The gradient with respect to the input tensor.
         """
         input_shape = node.children[0].shape
-        return reshape(out_grad, input_shape), 
+        return (reshape(out_grad, input_shape), )
 
 def reshape(a: Tensor, shape: Tuple[int, ...]) -> Tensor:
     """
@@ -932,7 +932,7 @@ class Summation(TensorOp):
         broadcasted_grad = broadcast_to(reshaped_grad, node.children[0].shape)
 
         # The gradient method needs to return a tuple, even though there's only one input
-        return (broadcasted_grad,)
+        return (broadcasted_grad, )
 
 
 def summation(a: Tensor, axes: Optional[tuple] = None) -> Tensor:
@@ -1004,7 +1004,7 @@ class BroadcastTo(TensorOp):
         sum_over = tuple([idx for idx in range(len(self.shape)) if self.shape[idx] != shape[idx]])
 
         # Finally, we reshape the gradient after summing over the appropriate dimensions to match `a`'s shape.
-        return reshape(summation(out_grad, sum_over), a_shape)
+        return (reshape(summation(out_grad, sum_over), a_shape), )
 
 def broadcast_to(a: Tensor, shape: Tuple[int, ...]) -> Tensor:
     """

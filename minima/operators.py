@@ -534,7 +534,8 @@ class ReLU(TensorOp):
         Returns:
         The gradients with respect to the inputs.
         """
-        return (out_grad * Tensor(node.children[0] >= 0), )
+        a = node.children[0].compute_cached_data()
+        return out_grad * Tensor(a > 0)
 
 def relu(a: Tensor) -> Tensor:
     """

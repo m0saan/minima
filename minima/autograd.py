@@ -443,7 +443,7 @@ class Tensor(Value):
     - requires_grad: Whether this tensor needs to compute gradients.
 
     Methods:
-    - realize_data: Computes and returns the actual data for this tensor.
+    - compute_cached_data: Computes and returns the actual data for this tensor.
     - shape: Returns the shape of this tensor.
     - dtype: Returns the data type of this tensor.
 

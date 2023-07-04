@@ -126,7 +126,7 @@ class SGD(Optimizer):
         if self.wd != 0:
             p.data *= (1 - self.lr * self.wd)
 
-# %% ../nbs/04_optim.ipynb 14
+# %% ../nbs/04_optim.ipynb 10
 class AdaGrad(Optimizer):
     """
     Implements AdaGrad optimization algorithm.
@@ -190,7 +190,7 @@ class AdaGrad(Optimizer):
         if self.wd != 0:
             p.data *= (1 - self.lr * self.wd)
 
-# %% ../nbs/04_optim.ipynb 17
+# %% ../nbs/04_optim.ipynb 13
 class RMSProp(Optimizer):
     """
     Implements RMSProp optimization algorithm.
@@ -257,7 +257,7 @@ class RMSProp(Optimizer):
         if self.wd != 0:
             p.data *= (1 - self.lr * self.wd)
 
-# %% ../nbs/04_optim.ipynb 20
+# %% ../nbs/04_optim.ipynb 16
 class Adam(Optimizer):
     """
     Implements the Adam optimization algorithm.

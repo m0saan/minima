@@ -498,10 +498,10 @@ class Tensor(Value):
         self._init(None, (), data=data, requires_grad=requires_grad, )
         
     def __repr__(self):
-        return "minima.Tensor(\n" + str(self.compute_cached_data()) + ")"
+        return "mi.Tensor(" + str(self.compute_cached_data()) + ")"
 
     def __str__(self):
-        return "tensor(" + self.compute_cached_data().__str__() + ")"
+        return "mi.Tensor(" + self.compute_cached_data().__str__() + ")"
 
     def __len__(self) -> int:
         return len(self.cached_data)
@@ -936,6 +936,19 @@ class Tensor(Value):
     
     def exp(self) -> 'Tensor':
         return mi.operators.Exp()(self)
+        
+    def item(self):
+        return self.compute_cached_data().item()
+
+    def argmax(self, axis=None, keepdims=None):
+        return Tensor(ARRAY_API.argmax(self.compute_cached_data(), axis=axis, keepdims=keepdims))
+
+    @staticmethod
+    def accuracy(preds, yb):
+       
+        assert preds.shape == yb.shape
+        correct_predictions = Tensor(preds.compute_cached_data() == yb.compute_cached_data()).sum()
+        return correct_predictions / preds.shape[0]
 
     __radd__ = __add__
     __rmul__ = __mul__

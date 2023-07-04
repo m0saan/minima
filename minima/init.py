@@ -36,8 +36,9 @@ def rand(
         A tensor of shape `shape`, filled with random numbers from the uniform distribution between `low` and `high`.
 
     """
-    device = mi.cpu() if device is None else device
-    array = device.rand(*shape) * (high - low) + low
+    device = mi.default_device() if device is None else device
+    array = device.rand(*shape, dtype=dtype) * (high - low) + low
+    print(type(array))
     return mi.Tensor(array, device=device, dtype=dtype, requires_grad=requires_grad)
 
 
@@ -67,8 +68,8 @@ def randn(
     mi.Tensor
         A tensor of shape `shape`, filled with random numbers from the normal distribution with the specified mean and standard deviation.
     """
-    device = mi.cpu() if device is None else device
-    array = device.randn(*shape) * std + mean
+    device = ndl.default_device() if device is None else device
+    array = device.randn(*shape, dtype=dtype) * std + mean
     return mi.Tensor(array, device=device, dtype=dtype, requires_grad=requires_grad)
 
 # %% ../nbs/02_init.ipynb 14
@@ -95,8 +96,8 @@ def constant(
     mi.Tensor
         A tensor of shape `shape`, filled with the constant value `c`.
     """
-    device = mi.cpu() if device is None else device
-    array = device.ones(*shape, dtype=dtype) * c # note: can change dtype
+    device = mi.default_device() if device is None else device
+    array = device.full(shape, c, dtype=dtype)
     return mi.Tensor(array, device=device, dtype=dtype, requires_grad=requires_grad)
 
 # %% ../nbs/02_init.ipynb 16
@@ -171,7 +172,7 @@ def randb(
     mi.Tensor
         A binary tensor of shape `shape`, filled with random boolean values, where the probability of `True` is `p`.
     """
-    device = mi.cpu() if device is None else device
+    device = mi.default_device() if device is None else device
     array = device.rand(*shape) <= p
     return mi.Tensor(array, device=device, dtype=dtype, requires_grad=requires_grad)
 
@@ -199,10 +200,14 @@ def one_hot(
     mi.Tensor
         A one-hot tensor of size `n`, with the `i`th element set to `1` and all others set to `0`.
     """
-    device = mi.cpu() if device is None else device
-    return mi.Tensor(device.one_hot(n,i.numpy(), dtype=dtype), device=device, requires_grad=requires_grad)
+    device = mi.default_device() if device is None else device
+    return ndl.Tensor(
+        device.one_hot(n, i.numpy().astype("int32"), dtype=dtype),
+        device=device,
+        requires_grad=requires_grad,
+    )
 
-# %% ../nbs/02_init.ipynb 24
+# %% ../nbs/02_init.ipynb 25
 def xavier_normal(
     fan_in, # The number of input units in the weight tensor.
     fan_out, # The number of output units in the weight tensor.
@@ -235,7 +240,7 @@ def xavier_normal(
     std = gain * math.sqrt(2 / (fan_in + fan_out))
     return randn(fan_in, fan_out) * std
 
-# %% ../nbs/02_init.ipynb 26
+# %% ../nbs/02_init.ipynb 27
 def xavier_uniform(
     fan_in, # The number of input units in the weight tensor.
     fan_out, # The number of output units in the weight tensor.
@@ -268,7 +273,7 @@ def xavier_uniform(
     a = gain * math.sqrt(6 / (fan_in + fan_out))
     return rand(fan_in, fan_out, low=-a, high=a)
 
-# %% ../nbs/02_init.ipynb 35
+# %% ../nbs/02_init.ipynb 36
 def kaiming_normal(
     fan_in,  # Number of input units in the weight tensor.
     fan_out, # Number of output units in the weight tensor.
@@ -300,7 +305,7 @@ def kaiming_normal(
     std = np.sqrt(2) / np.sqrt(fan_in)
     return randn(fan_in, fan_out) * std
 
-# %% ../nbs/02_init.ipynb 37
+# %% ../nbs/02_init.ipynb 38
 def kaiming_uniform(
     fan_in,  # Number of input units in the weight tensor.
     fan_out, # Number of output units in the weight tensor.
